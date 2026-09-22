@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Plan de demain — Standard A4</title>
+<style>
+:root{--blue:#2f68dc;--ink:#20262d;--muted:#6f7a85}
+*{box-sizing:border-box}
+body{margin:0;background:#e9edf2;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink)}
+.toolbar{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid #dfe4ea;padding:10px 12px;display:flex;gap:8px;align-items:center;justify-content:space-between}
+.toolbar .left{min-width:0}.toolbar b{display:block;font-size:16px}.toolbar small{color:var(--muted)}
+.btns{display:flex;gap:7px}.btn{border:0;border-radius:9px;padding:9px 11px;font-weight:800;text-decoration:none}.back{background:#edf1f5;color:#394450}.print{background:var(--blue);color:#fff}
+.sheetWrap{padding:12px;display:flex;justify-content:center}.sheet{width:min(100%,820px);background:#fff;box-shadow:0 4px 18px rgba(0,0,0,.14)}
+svg{display:block;width:100%;height:auto;background:#fff}
+@page{size:A4 portrait;margin:5mm}
+@media print{
+  body{background:#fff}.toolbar{display:none}.sheetWrap{padding:0}.sheet{width:100%;box-shadow:none}.sheet svg{width:100%;height:auto}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="left"><b>Plan de demain</b><small>Standard A4 validé • impression pleine page</small></div>
+  <div class="btns"><a class="btn back" href="/map.html">Retour</a><button class="btn print" onclick="window.print()">Imprimer</button></div>
+</div>
+<div class="sheetWrap"><div class="sheet">
+<svg viewBox="0 0 1000 1414" xmlns="http://www.w3.org/2000/svg" aria-label="Plan de rue simplifié">
+  <rect width="1000" height="1414" fill="#fff"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- dark road outline -->
+    <path d="M92 150 C132 150 146 175 178 205 C208 232 230 236 272 236 L745 236" stroke="#4f555b" stroke-width="82"/>
+    <path d="M248 240 L248 664 C248 705 221 731 180 739" stroke="#4f555b" stroke-width="82"/>
+    <path d="M178 739 L716 739 C760 739 781 762 781 808 L781 1275" stroke="#4f555b" stroke-width="82"/>
+    <path d="M0 1310 L1000 1310" stroke="#4f555b" stroke-width="82"/>
+    <!-- light road fill -->
+    <path d="M92 150 C132 150 146 175 178 205 C208 232 230 236 272 236 L745 236" stroke="#e2e4e7" stroke-width="70"/>
+    <path d="M248 240 L248 664 C248 705 221 731 180 739" stroke="#e2e4e7" stroke-width="70"/>
+    <path d="M178 739 L716 739 C760 739 781 762 781 808 L781 1275" stroke="#e2e4e7" stroke-width="70"/>
+    <path d="M0 1310 L1000 1310" stroke="#e2e4e7" stroke-width="70"/>
+  </g>
+  <!-- cul-de-sacs / rounded bulbs -->
+  <g fill="#e2e4e7" stroke="#4f555b" stroke-width="6">
+    <circle cx="92" cy="150" r="58"/>
+    <circle cx="820" cy="236" r="72"/>
+    <circle cx="150" cy="739" r="72"/>
+  </g>
+  <!-- small cleanup connectors -->
+  <path d="M150 739 L178 739" stroke="#e2e4e7" stroke-width="70" stroke-linecap="round"/>
+  <path d="M745 236 L805 236" stroke="#e2e4e7" stroke-width="70" stroke-linecap="round"/>
+  <!-- site marker -->
+  <circle cx="500" cy="78" r="18" fill="#e33131" stroke="#111" stroke-width="5"/>
+  <!-- north arrow -->
+  <g fill="#111" stroke="#111">
+    <path d="M930 96 L954 38 L978 96 L954 82 Z"/>
+    <text x="954" y="142" font-family="Arial, sans-serif" font-size="44" font-weight="800" text-anchor="middle">N</text>
+  </g>
+  <!-- road labels -->
+  <g fill="#111" font-family="Arial, sans-serif" font-weight="800">
+    <text x="505" y="255" font-size="48" text-anchor="middle">85a Ave</text>
+    <text x="275" y="510" font-size="45" text-anchor="middle" transform="rotate(-90 275 510)">111 St</text>
+    <text x="510" y="765" font-size="48" text-anchor="middle">85 Ave</text>
+    <text x="810" y="1040" font-size="45" text-anchor="middle" transform="rotate(-90 810 1040)">111a St</text>
+    <text x="350" y="1332" font-size="46" text-anchor="middle">84b Ave</text>
+  </g>
+</svg>
+</div></div>
+</body>
+</html>
