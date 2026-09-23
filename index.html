@@ -80,7 +80,7 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
   <section id="modeChooser" class="modeChooser">
     <h2 id="modeTitle">Choisir le mode de travail</h2>
     <p id="modeText">Consulte les figures officielles pour préparer ton setup, ou crée directement ton plan terrain.</p>
-    <div class="miniNote" style="margin:0 0 10px;color:#f3bd3d;font-weight:900">V59 · Image Sideoc · sans jours de semaine · cartouche hors plan · zoom − / +</div>
+    <div class="miniNote" style="margin:0 0 10px;color:#f3bd3d;font-weight:900">V60 · Images TMM restaurées · image Sideoc · cartouche hors plan · zoom − / +</div>
     <div class="modeGrid">
       <button class="modeCard" onclick="openTmm()"><b id="modeTmmTitle">📘 Figures TMM / MOT</b><span id="modeTmmText">Sections 7, 8 et 9 avec recherche par figure et image officielle.</span></button>
       <button class="modeCard" onclick="openImages()"><b id="modeImagesTitle">🖼️ Images seulement</b><span id="modeImagesText">Afficher les figures officielles en grand, une image à la fois.</span></button>
@@ -231,8 +231,8 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
 </main>
 </div>
 
-<script src="/vendor/jspdf.umd.min.js"></script>
-<script src="/tmm-images-7-9.js"></script>
+<script src="./vendor/jspdf.umd.min.js?v=60"></script>
+<script src="./tmm-images-7-9.js?v=60"></script>
 <script>
 let lang='fr',base=null,imageURL='',active='',selected=[],signs=[],redoSigns=[],deleting=false,dragging=-1,resizing=-1,drawingIndex=-1,drawingPointer=null,selectedIndex=-1,dragDX=0,dragDY=0,viewScale=1,addressVerified=false,resizeStartDist=1,resizeStartScale=1,panning=null,pinchStartDist=0,pinchStartScale=1,currentProjectId=null,projectAutosaveTimer=null,projectLoading=false;
 const touchPointers=new Map();let tmmSection='7',imageSection='7',galleryIndex=0,pdfDocPromise=null,pdfRenderSerial=0;
@@ -426,6 +426,7 @@ function openManual(){if(!currentProjectId)ensureCurrentProject();document.getEl
 function selectTmmSection(section,button){tmmSection=section;document.querySelectorAll('#tmmModule .tmmSection').forEach(b=>b.classList.remove('active'));if(button)button.classList.add('active');document.getElementById('tmmDetail').hidden=true;renderTmmFigures()}
 function renderTmmFigures(){const q=(document.getElementById('tmmSearch').value||'').toLowerCase(),list=document.getElementById('tmmList');list.innerHTML='';tmmFigures[tmmSection].filter(x=>x.join(' ').toLowerCase().includes(q)).forEach(x=>{const b=document.createElement('button');b.className='tmmFigure';const title=document.createElement('b');title.textContent=x[0]+' — '+x[1];const sub=document.createElement('span');sub.textContent=x[2];b.append(title,sub);b.onclick=()=>showTmmDetail(x);list.appendChild(b)});if(!list.children.length)list.innerHTML='<div class="status">'+(lang==='fr'?'Aucune figure trouvée.':'No figure found.')+'</div>'}
 function pdfDocument(){return Promise.reject(new Error('Local image mode'))}
+window.addEventListener('load',()=>{if(!window.TMM_IMAGE_DATA)console.error('TMM image bundle did not load from the repository path.')});
 async function renderOfficialFigure(code,canvas,status){const serial=++pdfRenderSerial;canvas.hidden=true;status.hidden=false;status.textContent=lang==='fr'?'Chargement de l’image…':'Loading image…';const src=window.TMM_IMAGE_DATA&&window.TMM_IMAGE_DATA[code];if(!src){status.textContent=lang==='fr'?'Image non disponible dans cette copie.':'Image unavailable in this copy.';return}const img=new Image();img.onload=()=>{if(serial!==pdfRenderSerial)return;canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;canvas.style.width='100%';canvas.style.height='auto';const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0);status.hidden=true;canvas.hidden=false};img.onerror=()=>{if(serial!==pdfRenderSerial)return;status.hidden=false;status.textContent=lang==='fr'?'Impossible d’afficher cette image.':'Unable to display this image.'};img.src=src}
 function showTmmDetail(figure){const d=document.getElementById('tmmDetail');d.hidden=false;d.replaceChildren();const h=document.createElement('h3');h.textContent=figure[0]+' — '+figure[1];const p=document.createElement('p');p.textContent=figure[2]||('TMM 2020 · Section '+tmmSection);const viewer=document.createElement('div');viewer.className='tmmViewer';const status=document.createElement('div');status.className='viewerStatus';const canvas=document.createElement('canvas');canvas.hidden=true;viewer.append(status,canvas);const row=document.createElement('div');row.className='row';const b=document.createElement('button');b.className='btn primary';b.style.width='100%';b.textContent=lang==='fr'?'Créer mon plan avec cette référence':'Create my plan with this reference';b.onclick=()=>openManualFromFigure(figure[0]);row.append(b);d.append(h,p,viewer,row);renderOfficialFigure(figure[0],canvas,status);d.scrollIntoView({behavior:'smooth',block:'start'})}
 function selectImageSection(section,button){imageSection=section;galleryIndex=0;document.querySelectorAll('.imageSection').forEach(b=>b.classList.remove('active'));if(button)button.classList.add('active');renderImagePicker()}
