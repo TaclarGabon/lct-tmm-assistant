@@ -20,7 +20,7 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
 .tray{display:flex;gap:7px;overflow-x:auto;padding:8px 0 4px;-webkit-overflow-scrolling:touch}.chip{flex:0 0 auto;min-width:112px;border:1px solid #45535c;background:#10171c;color:#e6ecef;border-radius:11px;padding:8px 9px;text-align:left}.chip.active{border:2px solid var(--yellow);padding:7px 8px;background:#2b2516;color:#ffdc73}.chip .code{font-size:11px;font-weight:950}.chip .name{font-size:8px;color:#9aa6ae;margin-top:2px;white-space:nowrap}
 .row{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.btn{border:0;border-radius:10px;padding:10px 11px;font-size:11px;font-weight:950}.primary{background:var(--yellow);color:#111;flex:1}.ghost{background:#212c34;color:#e9eef1;border:1px solid #3a4750}.danger{background:#4a2424;color:#ffd0cd;border:1px solid #703636}.deleteOn{background:#7a2929!important;color:#fff!important}
 .resultBar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px}.badge{font-size:9px;font-weight:900;background:#2a2517;color:#f5c23d;border-radius:999px;padding:5px 8px}
-.exportGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.exportGrid button{min-height:46px}.exportGrid .pdfPrimary{grid-column:1/-1;background:var(--yellow);color:#111;font-size:13px}
+.exportGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.exportGrid button{min-height:46px}.exportGrid .imagePrimary{grid-column:1/-1;background:var(--yellow);color:#111;font-size:13px}
 .tip{font-size:10px;line-height:1.45;color:#96a2aa;background:#10171c;border:1px solid #2d3942;border-radius:10px;padding:9px;margin-top:8px}
 .reset{width:100%;margin-top:10px}.miniNote{font-size:9px;color:#8f9ba4;margin-top:5px}.projectFields{display:grid;gap:8px;margin-top:10px}.projectFields label{margin:0}.projectFields input{width:100%;background:#0e151a;color:#fff;border:1px solid #3a4750;border-radius:11px;padding:11px;font-size:12px}.projectFields input:focus{outline:2px solid #f3bd3d;outline-offset:1px}.fieldHint{font-size:9px;color:#8f9ba4;line-height:1.4}
 .planMetaMargin{margin-top:9px;background:#fff;color:#111;border:1px solid #c9cfd3;border-radius:12px;padding:9px 11px;display:flex;align-items:flex-start;gap:10px;min-height:82px}
@@ -77,24 +77,10 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
       <div id="profileStatus" class="fieldHint" data-i18n="profileHint">Conservé sur cet appareil. Vérifie le camion avant chaque chantier.</div>
     </div>
   </details>
-  <details id="projectHub" class="projectHub">
-    <summary style="cursor:pointer;font-size:17px;font-weight:900;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px">
-      <span>Mes projets de la semaine</span><span aria-hidden="true">⌄</span>
-    </summary>
-    <div style="padding-top:10px">
-      <p>Les projets restent modifiables sur cet appareil. Tu peux reprendre, créer ou dupliquer un plan.</p>
-      <div class="projectActions">
-        <button class="btn primary" onclick="openLastProject()">Dernier projet</button>
-        <button class="btn ghost" onclick="newProjectForDay(currentWeekdayIndex())">Nouveau aujourd’hui</button>
-      </div>
-      <div id="weekProjects" class="weekGrid"></div>
-      <button class="btn danger reset" onclick="resetWeekProjects()">Réinitialiser la semaine</button>
-    </div>
-  </details>
   <section id="modeChooser" class="modeChooser">
     <h2 id="modeTitle">Choisir le mode de travail</h2>
     <p id="modeText">Consulte les figures officielles pour préparer ton setup, ou crée directement ton plan terrain.</p>
-    <div class="miniNote" style="margin:0 0 10px;color:#f3bd3d;font-weight:900">V58 · Cartouche hors plan · panneaux TMM · projets accordéon · zoom − / +</div>
+    <div class="miniNote" style="margin:0 0 10px;color:#f3bd3d;font-weight:900">V59 · Image Sideoc · sans jours de semaine · cartouche hors plan · zoom − / +</div>
     <div class="modeGrid">
       <button class="modeCard" onclick="openTmm()"><b id="modeTmmTitle">📘 Figures TMM / MOT</b><span id="modeTmmText">Sections 7, 8 et 9 avec recherche par figure et image officielle.</span></button>
       <button class="modeCard" onclick="openImages()"><b id="modeImagesTitle">🖼️ Images seulement</b><span id="modeImagesText">Afficher les figures officielles en grand, une image à la fois.</span></button>
@@ -233,9 +219,9 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
         <div class="fieldHint">Tu peux le renommer ici avant d’enregistrer. Sur iPhone, choisis « Enregistrer dans Fichiers » pour sélectionner le dossier.</div>
       </div>
       <div class="exportGrid">
-        <button id="pdfBtn" class="btn pdfPrimary" onclick="savePDF()" disabled data-i18n="savePdf">Enregistrer PDF</button>
+        <button id="pngBtn" class="btn imagePrimary" onclick="saveOrSharePNG()" disabled data-i18n="savePng">Enregistrer / partager l’image</button>
+        <button id="pdfBtn" class="btn ghost" onclick="savePDF()" disabled data-i18n="savePdf">PDF</button>
         <button id="printBtn" class="btn ghost" onclick="printPDF()" disabled data-i18n="printOnly">Imprimer</button>
-        <button id="pngBtn" class="btn ghost" onclick="downloadPNG()" disabled data-i18n="savePng">Enregistrer PNG</button>
       </div>
       <div class="tip" data-i18n="exportTip">Le fichier final ne contient jamais les poignées ou carrés bleus de sélection.</div>
       <button class="btn danger reset" onclick="resetPlan()" data-i18n="newPlan">Nouveau plan</button>
@@ -410,7 +396,7 @@ profileTitle:'Mon profil · Camion',techLabel:'Nom ou prénom',roleLabel:'Foncti
 stepImport:'Importer',stepSigns:'Panneaux',stepExport:'Exporter',heroTitle:'Plan TMM en quelques minutes',heroText:'Importe ton screenshot, utilise Nettoie, puis ajoute les éléments TMM. L’adresse est facultative.',flowDispatch:'Screenshot',flowPlan:'Nettoie',flowSigns:'Panneaux',
 importTitle:'1. Importer le screenshot',importSub:'Adresse facultative · Nettoie · puis ouvre l’éditeur',dispatchTitle:'B. Dispatch (optionnel)',dispatchText:'Colle le dispatch seulement si tu veux récupérer automatiquement l’adresse.',dispatchButton:'Trouver l’adresse',dispatchWaiting:'Aucun dispatch importé.',jobLabel:'Nom du chantier / TMP',addressLabel:'Adresse du plan (optionnelle)',verifyButton:'Vérifier l’adresse',addressWaiting:'Facultatif : cette adresse apparaît dans la marge, hors du plan.',footerHint:'Si tu la laisses vide, le plan reste utilisable. Le cartouche reste dans la marge et ne recouvre jamais la carte.',planTitle:'A. Importer le screenshot / plan',planText:'PNG, JPG ou screenshot Google Maps. Aucune adresse n’est obligatoire.',planButton:'Importer l’image',planLocked:'Aucune image importée.',
 signsTitle:'2. Ajouter les panneaux TMM',signsSub:'Choisir → toucher le plan → glisser pour déplacer',regularSigns:'Panneaux réguliers',noneSelected:'Aucun panneau sélectionné.',importFirst:'Importe d’abord ton plan.',fieldTools:'Outils terrain',flaggerTool:'🚩 Signaleur',workTool:'▧ Zone de travaux',plotTool:'● Plot / point',duplicateTool:'⧉ Dupliquer',pickupLeftTool:'Pickup ←',pickupRightTool:'Pickup →',rotateTool:'↻ Tourner l’objet',objectSizeTitle:'Taille de l’objet sélectionné',sizeDown:'− Réduire',sizeUp:'+ Agrandir',toolHelp:'Touche un élément, puis utilise − Réduire ou + Agrandir.',workspace:'Plan de travail',fit:'Ajuster',fitView:'Vue ajustée au plan.',undo:'Annuler',redo:'Rétablir',delete:'Supprimer',done:'Terminer',moveTip:'Touche un élément pour le sélectionner. Déplace-le en le glissant. Pour changer sa taille, utilise − Réduire ou + Agrandir.',
-exportTitle:'3. Exporter',exportSub:'Enregistrer sur le téléphone puis envoyer dans Sidebox',savePdf:'Enregistrer PDF',printOnly:'Imprimer',savePng:'Enregistrer PNG',exportTip:'Mode impression clair : fond blanc, route éclaircie, éléments TMM nets, Nord séparé et cartouche dans la marge supérieure gauche, hors de la carte.',newPlan:'Nouveau plan',
+exportTitle:'3. Exporter',exportSub:'Enregistrer ou partager l’image directement vers Sideoc',savePdf:'PDF',printOnly:'Imprimer',savePng:'Enregistrer / partager l’image',exportTip:'Mode impression clair : fond blanc, route éclaircie, éléments TMM nets, Nord séparé et cartouche dans la marge supérieure gauche, hors de la carte.',newPlan:'Nouveau plan',
 chooseSign:'Choisir un panneau…',dispatchReading:'Lecture du dispatch…',dispatchFound:'Adresse trouvée : ',dispatchNotFound:'Adresse du chantier introuvable. Tu peux la saisir manuellement.',dispatchError:'Impossible de lire le dispatch. Saisis l’adresse manuellement.',verifying:'Vérification de l’adresse…',verified:'✓ Adresse vérifiée. Tu peux maintenant importer le plan.',verifyError:'Adresse non reconnue. Vérifie-la et réessaie.',planImported:'✓ Plan importé. Tu peux placer les éléments.',chooseTool:'Choisis un panneau ou un outil terrain.',placed:' placé.',selected:' sélectionné.',resizeHelp:'Utilise − Réduire ou + Agrandir.',noSize:'Sélectionne d’abord un élément placé.',deleteMode:'Mode suppression — touche l’élément à enlever.',placementDone:'Placement terminé.',confirmReset:'Commencer un nouveau plan ?',popup:'Autorise les fenêtres surgissantes pour imprimer le PDF.',elements:'élément',elementsPlural:'éléments',addressMissing:'Adresse du site : à compléter',horizontal:'Code horizontal.',vertical:'Code vertical.'
 },
 en:{
@@ -419,7 +405,7 @@ profileTitle:'My profile · Truck',techLabel:'Name',roleLabel:'Role (LCT, TCP…
 stepImport:'Import',stepSigns:'Signs',stepExport:'Export',heroTitle:'Build a TMM plan in minutes',heroText:'Import your screenshot, use Clean, then add the TMM elements. The address is optional.',flowDispatch:'Screenshot',flowPlan:'Clean',flowSigns:'Signs',
 importTitle:'1. Import the screenshot',importSub:'Optional address · Clean · then open the editor',dispatchTitle:'B. Dispatch (optional)',dispatchText:'Paste the dispatch only if you want to recover the address automatically.',dispatchButton:'Find address',dispatchWaiting:'No dispatch imported.',jobLabel:'Job / TMP name',addressLabel:'Plan address (optional)',verifyButton:'Verify address',addressWaiting:'Optional: this address appears in the margin, outside the plan.',footerHint:'Leave it blank and the plan still works. The information box stays in the margin and never covers the map.',planTitle:'A. Import screenshot / plan',planText:'PNG, JPG or Google Maps screenshot. No address is required.',planButton:'Import image',planLocked:'No image imported.',
 signsTitle:'2. Add TMM signs',signsSub:'Choose → touch the plan → drag to move',regularSigns:'Regular Signs',noneSelected:'No sign selected.',importFirst:'Import your plan first.',fieldTools:'Field tools',flaggerTool:'🚩 Flagger',workTool:'▧ Work Area',plotTool:'● Plot / point',duplicateTool:'⧉ Duplicate',pickupLeftTool:'Pickup ←',pickupRightTool:'Pickup →',rotateTool:'↻ Rotate object',objectSizeTitle:'Selected object size',sizeDown:'− Smaller',sizeUp:'+ Larger',toolHelp:'Touch an element, then use − Smaller or + Larger.',workspace:'Working plan',fit:'Fit',fitView:'View fitted to plan.',undo:'Undo',redo:'Redo',delete:'Delete',done:'Done',moveTip:'Touch an element to select it. Drag to move it. To change its size, use − Smaller or + Larger.',
-exportTitle:'3. Export',exportSub:'Save to your phone, then send it to Sidebox',savePdf:'Save PDF',printOnly:'Print',savePng:'Save PNG',exportTip:'Light print mode: white background, lightened roadway, crisp TMM elements, separate North marker and information box in the upper-left margin, outside the map.',newPlan:'New plan',
+exportTitle:'3. Export',exportSub:'Save or share the image directly to Sideoc',savePdf:'PDF',printOnly:'Print',savePng:'Save / share image',exportTip:'Light print mode: white background, lightened roadway, crisp TMM elements, separate North marker and information box in the upper-left margin, outside the map.',newPlan:'New plan',
 chooseSign:'Choose a sign…',dispatchReading:'Reading dispatch…',dispatchFound:'Address found: ',dispatchNotFound:'Job-site address not found. You can enter it manually.',dispatchError:'The dispatch could not be read. Enter the address manually.',verifying:'Verifying address…',verified:'✓ Address verified. You can now import the plan.',verifyError:'Address not recognized. Check it and try again.',planImported:'✓ Plan imported. You can place elements.',chooseTool:'Choose a sign or field tool.',placed:' placed.',selected:' selected.',resizeHelp:'Use − Smaller or + Larger.',noSize:'Select a placed element first.',deleteMode:'Delete mode — touch the element to remove.',placementDone:'Placement complete.',confirmReset:'Start a new plan?',popup:'Allow pop-ups to print the PDF.',elements:'element',elementsPlural:'elements',addressMissing:'Site address: to be completed',horizontal:'Horizontal code.',vertical:'Vertical code.'
 }};
 const signNames={
@@ -616,16 +602,25 @@ function showExportPreview(kind,url,filename,w){
  const back=lang==='fr'?'← Retour à l’application':'← Back to app';
  const download=lang==='fr'?'Télécharger dans Fichiers':'Download to Files';
  const open=lang==='fr'?'Ouvrir le fichier':'Open file';
- const note=lang==='fr'?'Sur iPhone, le téléchargement va généralement dans le dossier Téléchargements de l’app Fichiers. Tu peux ensuite le déplacer où tu veux.':'On iPhone, downloads normally go to the Downloads folder in Files. You can move the file afterward.';
+ const note=kind==='png'?(lang==='fr'?'Image PNG prête pour Sideoc. Sur iPhone, tu peux aussi appuyer longuement sur l’image pour l’enregistrer dans Photos.':'PNG image ready for Sideoc. On iPhone, you can also press and hold the image to save it to Photos.'):(lang==='fr'?'Sur iPhone, le téléchargement va généralement dans le dossier Téléchargements de l’app Fichiers.':'On iPhone, downloads normally go to the Downloads folder in Files.');
  const media=kind==='png'?'<img src="'+url+'" alt="Bearclaw TMM Plan">':'<iframe src="'+url+'" title="Bearclaw TMM PDF"></iframe>';
  w.document.write('<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>'+filename+'</title><style>*{box-sizing:border-box}html,body{margin:0;background:#111;color:#fff;font-family:Arial,sans-serif}.bar{position:sticky;top:0;z-index:5;display:flex;gap:8px;flex-wrap:wrap;padding:calc(10px + env(safe-area-inset-top)) 10px 10px;background:#111}.bar button,.bar a{border:0;border-radius:11px;padding:11px 13px;font-weight:900;text-decoration:none}.back{background:#27323a;color:#fff}.save{background:#f3bd3d;color:#111}.open{background:#1f2a31;color:#fff}.note{padding:8px 12px;color:#b9c2c8;font-size:12px;line-height:1.4}.view{background:#fff;min-height:75vh;display:flex;align-items:center;justify-content:center}.view img{max-width:100%;height:auto}.view iframe{width:100%;height:78vh;border:0;background:#fff}</style></head><body><div class="bar"><button class="back" onclick="window.close()">'+back+'</button><a class="save" href="'+url+'" download="'+filename+'">'+download+'</a><a class="open" href="'+url+'" target="_blank">'+open+'</a></div><div class="note">'+note+'</div><div class="view">'+media+'</div></body></html>');
  w.document.close();
 }
-function downloadPNG(){
+function canvasPngBlob(canvas){return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('PNG export failed')),'image/png'))}
+async function saveOrSharePNG(){
  if(!base)return;selectedIndex=-1;redraw();step(3);
- const w=window.open('','_blank');if(!w){alert(t('popup'));return}
- const out=buildLightExportCanvas(),filename=exportBaseName()+'.png',url=out.toDataURL('image/png');
- showExportPreview('png',url,filename,w);
+ const out=buildLightExportCanvas(),filename=exportBaseName()+'.png';
+ try{
+   const blob=await canvasPngBlob(out),file=new File([blob],filename,{type:'image/png'});
+   if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+     try{await navigator.share({files:[file],title:filename});return}catch(e){if(e&&e.name==='AbortError')return}
+   }
+   const w=window.open('','_blank');if(!w){alert(lang==='fr'?'Autorise les fenêtres surgissantes pour ouvrir l’image.':'Allow pop-ups to open the image.');return}
+   const url=URL.createObjectURL(blob);showExportPreview('png',url,filename,w);setTimeout(()=>URL.revokeObjectURL(url),10*60*1000);
+ }catch(e){
+   console.error(e);const w=window.open('','_blank');if(!w)return;showExportPreview('png',out.toDataURL('image/png'),filename,w);
+ }
 }
 async function savePDF(){
  if(!base)return;selectedIndex=-1;redraw();step(3);
