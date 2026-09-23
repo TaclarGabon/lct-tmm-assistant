@@ -28,6 +28,7 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
 @media (prefers-reduced-motion:reduce){.splashInner,.introBar span{animation:none}.splash{transition:none}}
 .modeChooser,.tmmModule,.imageModule{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0}.modeChooser h2,.tmmModule h2,.imageModule h2{font-size:18px;margin:0 0 5px}.modeChooser>p,.tmmModule>p,.imageModule>p{font-size:11px;color:var(--muted);line-height:1.45;margin:0 0 12px}.modeGrid{display:grid;grid-template-columns:1fr;gap:8px}.modeCard{border:1px solid #3a4750;background:#10171c;color:#fff;border-radius:13px;padding:14px 10px;text-align:left}.modeCard b{display:block;color:var(--yellow);font-size:14px;margin-bottom:5px}.modeCard span{font-size:10px;color:#aab5bc;line-height:1.35}.tmmTop{display:flex;align-items:center;gap:8px;margin-bottom:12px;position:sticky;top:103px;z-index:20;background:var(--panel);padding:5px 0}.tmmTop .ghost{white-space:nowrap}.tmmSections{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.tmmSection{border:1px solid #3a4750;background:#10171c;color:#fff;border-radius:10px;padding:10px 5px;font-weight:900}.tmmSection.active{border-color:var(--yellow);color:var(--yellow);background:#292313}.tmmSearch{width:100%;margin:10px 0;padding:11px;background:#0e151a;color:#fff;border:1px solid #3a4750;border-radius:10px}.tmmFigure{width:100%;border:1px solid #303b44;background:#10171c;color:#fff;border-radius:11px;padding:11px;text-align:left;margin:5px 0}.tmmFigure b{display:block;font-size:12px}.tmmFigure span{display:block;color:#9eabb3;font-size:9px;margin-top:3px}.tmmDetail{margin-top:10px;padding:12px;background:#0e151a;border:1px solid #3a4750;border-radius:12px}.tmmDetail h3{font-size:15px;color:var(--yellow);margin:0 0 6px}.tmmDetail p{font-size:10px;color:#b8c2c8;line-height:1.45}.tmmViewer{margin-top:10px;border:1px solid #3a4750;background:#fff;border-radius:10px;overflow:auto;min-height:260px;display:grid;place-items:start center}.tmmViewer canvas{display:block;max-width:100%;height:auto;background:#fff}.viewerStatus{color:#111;padding:24px 10px;text-align:center;font-size:11px}.galleryPicker{margin:10px 0}.galleryNav{display:grid;grid-template-columns:1fr auto 1fr;gap:7px;align-items:center;margin-top:10px}.galleryNav .btn:last-child{justify-self:stretch}.galleryCount{text-align:center;font-size:10px;color:#c7d0d5}.manualBack{position:sticky;top:103px;z-index:20;background:#0b1014;padding:7px 0 9px}.panHint{text-align:center;color:#90a0aa;font-size:9px;margin-top:5px}
 .sessionControls{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:8px}.sessionControls small{font-size:10px;color:var(--ok)}.sessionControls button{background:transparent;color:var(--yellow);border:0;border-radius:8px;padding:8px 12px;font-weight:800;font-size:11px}.sessionControls button[data-closed="true"]{color:var(--ok)}
+.projectHub{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0}.projectHub h2{font-size:17px;margin:0 0 4px}.projectHub>p{font-size:10px;color:var(--muted);line-height:1.4;margin:0 0 10px}.projectActions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}.weekGrid{display:grid;grid-template-columns:1fr;gap:8px}.dayCard{border:1px solid #34424c;background:#10171c;border-radius:12px;padding:10px}.dayHead{display:flex;justify-content:space-between;align-items:center;gap:8px}.dayHead b{font-size:12px;color:#fff}.dayHead button{border:1px solid #46545e;background:#1b252c;color:#fff;border-radius:8px;padding:6px 9px;font-weight:900}.dayProjects{display:grid;gap:6px;margin-top:7px}.projectRow{display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center}.projectOpen{border:1px solid #34424c;background:#0d1419;color:#e8edf0;border-radius:9px;padding:9px;text-align:left}.projectOpen strong{display:block;font-size:11px}.projectOpen small{display:block;color:#8f9ba4;font-size:8px;margin-top:2px}.projectMore{border:1px solid #34424c;background:#202a31;color:#fff;border-radius:9px;padding:9px;font-weight:900}.currentProjectTag{display:inline-block;margin-top:5px;color:#8bd8ad;font-size:9px;font-weight:900}.emptyDay{font-size:9px;color:#71808a;padding:3px 0}
 @media(max-width:390px){.brand{flex-wrap:wrap}.langSwitch{margin-left:auto}}
 </style>
 </head>
@@ -73,10 +74,24 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
       <div id="profileStatus" class="fieldHint" data-i18n="profileHint">Conservé sur cet appareil. Vérifie le camion avant chaque chantier.</div>
     </div>
   </details>
+  <details id="projectHub" class="projectHub">
+    <summary style="cursor:pointer;font-size:17px;font-weight:900;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <span>Mes projets de la semaine</span><span aria-hidden="true">⌄</span>
+    </summary>
+    <div style="padding-top:10px">
+      <p>Les projets restent modifiables sur cet appareil. Tu peux reprendre, créer ou dupliquer un plan.</p>
+      <div class="projectActions">
+        <button class="btn primary" onclick="openLastProject()">Dernier projet</button>
+        <button class="btn ghost" onclick="newProjectForDay(currentWeekdayIndex())">Nouveau aujourd’hui</button>
+      </div>
+      <div id="weekProjects" class="weekGrid"></div>
+      <button class="btn danger reset" onclick="resetWeekProjects()">Réinitialiser la semaine</button>
+    </div>
+  </details>
   <section id="modeChooser" class="modeChooser">
     <h2 id="modeTitle">Choisir le mode de travail</h2>
     <p id="modeText">Consulte les figures officielles pour préparer ton setup, ou crée directement ton plan terrain.</p>
-    <div class="miniNote" style="margin:0 0 10px;color:#f3bd3d;font-weight:900">V46 · Import direct → Nettoie → Éditeur → Export clair</div>
+    <div class="miniNote" style="margin:0 0 10px;color:#f3bd3d;font-weight:900">V56 · Projets de la semaine · reprise modifiable · export iPhone amélioré</div>
     <div class="modeGrid">
       <button class="modeCard" onclick="openTmm()"><b id="modeTmmTitle">📘 Figures TMM / MOT</b><span id="modeTmmText">Sections 7, 8 et 9 avec recherche par figure et image officielle.</span></button>
       <button class="modeCard" onclick="openImages()"><b id="modeImagesTitle">🖼️ Images seulement</b><span id="modeImagesText">Afficher les figures officielles en grand, une image à la fois.</span></button>
@@ -105,31 +120,44 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
   <div class="hero">
     <h1 data-i18n="heroTitle">Plan TMM en quelques minutes</h1>
     <p data-i18n="heroText">Importe le dispatch, vérifie l’adresse, ajoute le plan propre et place les éléments TMM.</p>
-    <div class="flow"><span>Plan propre</span><b>→</b><span>Adresse</span><b>→</b><span data-i18n="flowSigns">Panneaux</span><b>→</b><span>PNG / PDF</span></div>
+    <div class="flow"><span data-i18n="flowDispatch">Dispatch</span><b>→</b><span data-i18n="flowPlan">Plan propre</span><b>→</b><span data-i18n="flowSigns">Panneaux</span><b>→</b><span>PNG / PDF</span></div>
   </div>
 
   <section class="acc open" id="a1">
-    <button class="head" onclick="toggleAcc(this)"><span class="ico">🗺️</span><span class="txt"><strong data-i18n="importTitle">1. Importer le screenshot</strong><small data-i18n="importSub">Importe le plan propre · saisis l’adresse · ouvre l’éditeur</small></span><span class="arrow">⌄</span></button>
+    <button class="head" onclick="toggleAcc(this)"><span class="ico">🗺️</span><span class="txt"><strong data-i18n="importTitle">1. Importer le screenshot</strong><small data-i18n="importSub">Adresse facultative · Nettoie · puis ouvre l’éditeur</small></span><span class="arrow">⌄</span></button>
     <div class="body">
       <div id="planUpload" class="upload">
-        <div class="uploadTitle" data-i18n="planTitle">Importer le plan propre</div>
-        <div class="uploadSub" data-i18n="planText">PNG ou JPG déjà nettoyé dans ChatGPT.</div>
-        <label class="fileBtn"><span data-i18n="planButton">Importer le plan</span><input id="file" type="file" accept="image/*" onchange="loadImage(event)"></label>
+        <div class="uploadTitle" data-i18n="planTitle">A. Importer le screenshot / plan</div>
+        <div class="uploadSub" data-i18n="planText">PNG, JPG ou screenshot Google Maps. Aucune adresse n’est obligatoire.</div>
+        <label class="fileBtn"><span data-i18n="planButton">Importer l’image</span><input id="file" type="file" accept="image/*" onchange="loadImage(event)"></label>
       </div>
-      <div id="importStatus" class="status">Aucun plan importé.</div>
+      <div id="importStatus" class="status">Aucune image importée.</div>
       <div class="row" style="margin-top:10px">
-        <button id="openEditorBtn" class="btn primary" onclick="openEditorFromImport()" disabled>Ouvrir l’éditeur du plan</button>
+        <button id="cleanPlanBtn" class="btn primary" onclick="cleanImportedPlan()" disabled>Nettoie</button>
+        <button id="openEditorBtn" class="btn ghost" onclick="openEditorFromImport()" disabled>Ouvrir l’éditeur du plan</button>
       </div>
+      <div id="cleanStatus" class="verifyState">Le bouton Nettoie produit un plan clair en paysage, prêt pour l’impression.</div>
 
       <div class="sectionDivider"></div>
 
       <div class="projectFields">
         <label for="jobName" data-i18n="jobLabel">Nom du chantier / TMP</label>
         <input id="jobName" value="Hand-drawn TMP" maxlength="70" oninput="redraw()">
-        <label for="siteAddress">Adresse du chantier</label>
+        <label for="siteAddress" data-i18n="addressLabel">Adresse du plan (optionnelle)</label>
         <input id="siteAddress" placeholder="Ex. 15122 72 Ave, Surrey, BC" data-ph-fr="Ex. 15122 72 Ave, Surrey, BC" data-ph-en="E.g. 15122 72 Ave, Surrey, BC" maxlength="180" oninput="invalidateAddress()">
-        <div id="addressStatus" class="verifyState">Cette adresse apparaîtra dans le cartouche du plan final.</div>
-        <div class="fieldHint">Saisis-la manuellement telle qu’elle doit apparaître sur le PDF/PNG.</div>
+        <div id="addressStatus" class="verifyState">Facultatif : cette adresse sert uniquement au cartouche final.</div>
+        <div class="fieldHint" data-i18n="footerHint">Si tu la laisses vide, le plan reste utilisable et le cartouche n’affiche pas d’adresse.</div>
+      </div>
+
+      <div class="sectionDivider"></div>
+
+      <div class="dispatchBox">
+        <h3 data-i18n="dispatchTitle">B. Dispatch (optionnel)</h3>
+        <p data-i18n="dispatchText">Tu peux coller un dispatch uniquement si tu veux récupérer automatiquement l’adresse.</p>
+        <div class="dispatchRow">
+          <label for="dispatchText" data-i18n="pasteDispatch">Coller le texte du dispatch</label><textarea id="dispatchText" rows="5" style="width:100%;padding:12px;background:#0e151a;color:#fff;border:1px solid #3a4750;border-radius:10px;font-size:16px"></textarea><button class="btn ghost" onclick="readDispatchText()" data-i18n="dispatchButton">Trouver l’adresse</button>
+        </div>
+        <div id="dispatchStatus" class="verifyState" data-i18n="dispatchWaiting">Aucun dispatch importé.</div>
       </div>
     </div>
   </section>
@@ -154,11 +182,12 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
         <button id="pickupRightTool" class="toolBtn" onclick="activateTool('pickupRight')" data-i18n="pickupRightTool">Pickup →</button>
         <button id="rotateTool" class="toolBtn" onclick="rotateSelectedElement()" data-i18n="rotateTool">↻ Tourner l’objet</button>
       </div>
+      <div class="subhead" data-i18n="objectSizeTitle">Taille de l’objet sélectionné</div>
       <div class="sizeControls">
-        <button class="btn ghost" onclick="resizeSelected(.82)" data-i18n="sizeDown">Taille −</button>
-        <button class="btn ghost" onclick="resizeSelected(1.22)" data-i18n="sizeUp">Taille +</button>
+        <button class="btn ghost" onclick="resizeSelected(.90)" data-i18n="sizeDown">− Réduire</button>
+        <button class="btn ghost" onclick="resizeSelected(1.10)" data-i18n="sizeUp">+ Agrandir</button>
       </div>
-      <div id="selectedInfo" class="selectedInfo" data-i18n="toolHelp">Sélectionne un élément placé, puis utilise Taille − / + ou tire sa poignée bleue.</div>
+      <div id="selectedInfo" class="selectedInfo" data-i18n="toolHelp">Touche un élément, puis utilise − Réduire ou + Agrandir.</div>
 
       <div id="workspace" class="workspace">
         <div class="resultBar"><b data-i18n="workspace">Plan de travail</b><span id="count" class="badge">0</span></div>
@@ -187,7 +216,7 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
     <div class="body">
       <div class="projectFields" style="margin:0 0 12px">
         <label for="exportFileName">Nom du fichier</label>
-        <input id="exportFileName" value="Bearclaw-TMM-plan" maxlength="80" placeholder="Ex. 72-Ave-152-St-TMP">
+        <input id="exportFileName" value="Bearclaw-TMM-plan" maxlength="80" placeholder="Ex. 72-Ave-152-St-TMP" oninput="scheduleProjectAutosave()">
         <div class="fieldHint">Tu peux le renommer ici avant d’enregistrer. Sur iPhone, choisis « Enregistrer dans Fichiers » pour sélectionner le dossier.</div>
       </div>
       <div class="exportGrid">
@@ -203,31 +232,182 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
 </main>
 </div>
 
-<script src="./vendor/jspdf.umd.min.js"></script>
-<script src="./tmm-images-7-9.js"></script>
+<script src="/vendor/jspdf.umd.min.js"></script>
+<script src="/tmm-images-7-9.js"></script>
 <script>
-let lang='fr',base=null,imageURL='',active='',selected=[],signs=[],redoSigns=[],deleting=false,dragging=-1,resizing=-1,drawingIndex=-1,drawingPointer=null,selectedIndex=-1,dragDX=0,dragDY=0,viewScale=1,addressVerified=false,resizeStartDist=1,resizeStartScale=1,panning=null,pinchStartDist=0,pinchStartScale=1;
+let lang='fr',base=null,imageURL='',active='',selected=[],signs=[],redoSigns=[],deleting=false,dragging=-1,resizing=-1,drawingIndex=-1,drawingPointer=null,selectedIndex=-1,dragDX=0,dragDY=0,viewScale=1,addressVerified=false,resizeStartDist=1,resizeStartScale=1,panning=null,pinchStartDist=0,pinchStartScale=1,currentProjectId=null,projectAutosaveTimer=null,projectLoading=false;
 const touchPointers=new Map();let tmmSection='7',imageSection='7',galleryIndex=0,pdfDocPromise=null,pdfRenderSerial=0;
 const officialPdfUrl='https://www2.gov.bc.ca/assets/gov/driving-and-transportation/transportation-infrastructure/engineering-standards-and-guidelines/traffic-engineering-and-safety/traffic-engineering/traffic-management-and-traffic-control/2020-traffic-control-manual/2020-traffic-management-manual-for-work-on-roadways.pdf';
 const c=document.getElementById('plan');
+
+function projectDb(){
+  if(projectDb.promise)return projectDb.promise;
+  projectDb.promise=new Promise((resolve,reject)=>{
+    const req=indexedDB.open('bearclaw-tmm-projects',1);
+    req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains('projects'))db.createObjectStore('projects',{keyPath:'id'})};
+    req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+  });
+  return projectDb.promise;
+}
+function dbRequest(req){return new Promise((resolve,reject)=>{req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
+async function projectGet(id){const db=await projectDb();return dbRequest(db.transaction('projects','readonly').objectStore('projects').get(id))}
+async function projectPut(rec){const db=await projectDb();return dbRequest(db.transaction('projects','readwrite').objectStore('projects').put(rec))}
+async function projectDelete(id){const db=await projectDb();return dbRequest(db.transaction('projects','readwrite').objectStore('projects').delete(id))}
+async function projectAll(){const db=await projectDb();return dbRequest(db.transaction('projects','readonly').objectStore('projects').getAll())}
+function currentWeekdayIndex(){return (new Date().getDay()+6)%7}
+function weekKey(d=new Date()){const x=new Date(d);const day=(x.getDay()+6)%7;x.setDate(x.getDate()-day);x.setHours(0,0,0,0);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')}
+function projectId(){return (crypto.randomUUID?crypto.randomUUID():('p-'+Date.now()+'-'+Math.random().toString(36).slice(2)))}
+function projectTitle(rec){return (rec.address||rec.jobName||'Projet TMM').trim()||'Projet TMM'}
+function projectTimestamp(ts){try{return new Date(ts).toLocaleString(lang==='fr'?'fr-CA':'en-CA',{weekday:'short',hour:'2-digit',minute:'2-digit'})}catch(e){return''}}
+function clearWorkingProject(){
+  base=null;signs=[];redoSigns=[];selected=[];active='';deleting=false;dragging=-1;resizing=-1;drawingIndex=-1;selectedIndex=-1;viewScale=1;addressVerified=false;
+  document.getElementById('workspace').classList.remove('show');
+  document.getElementById('file').value='';
+  document.getElementById('dispatchText').value='';
+  document.getElementById('siteAddress').value='';
+  document.getElementById('jobName').value='Hand-drawn TMP';
+  document.getElementById('exportFileName').value='Bearclaw-TMM-plan';
+  document.getElementById('pngBtn').disabled=true;document.getElementById('pdfBtn').disabled=true;document.getElementById('printBtn').disabled=true;
+  document.getElementById('cleanPlanBtn').disabled=true;document.getElementById('openEditorBtn').disabled=true;
+  document.getElementById('importStatus').textContent=t('planLocked');
+  document.getElementById('cleanStatus').textContent=lang==='fr'?'Le bouton Nettoie produit un plan clair en paysage, prêt pour l’impression.':'Clean creates a light landscape plan ready to print.';
+  document.getElementById('addressStatus').textContent=t('addressWaiting');
+  renderTray();step(1);
+}
+async function saveCurrentProjectNow(){
+  if(projectLoading||!currentProjectId)return;
+  try{
+    const old=await projectGet(currentProjectId)||{};
+    const rec={
+      id:currentProjectId,
+      week:old.week||weekKey(),
+      day:Number.isInteger(old.day)?old.day:currentWeekdayIndex(),
+      createdAt:old.createdAt||Date.now(),
+      updatedAt:Date.now(),
+      jobName:document.getElementById('jobName').value.trim(),
+      address:document.getElementById('siteAddress').value.trim(),
+      exportName:document.getElementById('exportFileName').value.trim(),
+      selected:[...selected],
+      signs:JSON.parse(JSON.stringify(signs)),
+      baseDataUrl:base?base.toDataURL('image/jpeg',.88):null
+    };
+    await projectPut(rec);
+    try{localStorage.setItem('bearclaw-last-project-id',currentProjectId)}catch(e){}
+    renderProjectHub();
+  }catch(e){console.warn('Project autosave failed',e)}
+}
+function scheduleProjectAutosave(){if(projectLoading||!currentProjectId)return;clearTimeout(projectAutosaveTimer);projectAutosaveTimer=setTimeout(saveCurrentProjectNow,700)}
+async function ensureCurrentProject(){
+  if(currentProjectId)return currentProjectId;
+  const id=projectId(),now=Date.now();
+  currentProjectId=id;
+  await projectPut({id,week:weekKey(),day:currentWeekdayIndex(),createdAt:now,updatedAt:now,jobName:'Hand-drawn TMP',address:'',exportName:'Bearclaw-TMM-plan',selected:[],signs:[],baseDataUrl:null});
+  try{localStorage.setItem('bearclaw-last-project-id',id)}catch(e){}
+  renderProjectHub();
+  return id;
+}
+async function newProjectForDay(day){
+  await saveCurrentProjectNow();
+  const id=projectId(),now=Date.now();
+  currentProjectId=id;projectLoading=true;clearWorkingProject();projectLoading=false;
+  await projectPut({id,week:weekKey(),day:Number(day),createdAt:now,updatedAt:now,jobName:'Hand-drawn TMP',address:'',exportName:'Bearclaw-TMM-plan',selected:[],signs:[],baseDataUrl:null});
+  try{localStorage.setItem('bearclaw-last-project-id',id)}catch(e){}
+  openManual();openOnly('a1');renderProjectHub();
+}
+async function loadProject(id){
+  const rec=await projectGet(id);if(!rec)return;
+  await saveCurrentProjectNow();
+  projectLoading=true;currentProjectId=id;clearWorkingProject();
+  document.getElementById('jobName').value=rec.jobName||'Hand-drawn TMP';
+  document.getElementById('siteAddress').value=rec.address||'';
+  document.getElementById('exportFileName').value=rec.exportName||'Bearclaw-TMM-plan';
+  selected=Array.isArray(rec.selected)?[...rec.selected]:[];
+  if(rec.baseDataUrl){
+    await setBaseFromDataUrl(rec.baseDataUrl);
+    signs=Array.isArray(rec.signs)?JSON.parse(JSON.stringify(rec.signs)):[];
+    selected=Array.isArray(rec.selected)?[...rec.selected]:[];
+    document.getElementById('workspace').classList.add('show');
+    document.getElementById('pngBtn').disabled=false;document.getElementById('pdfBtn').disabled=false;document.getElementById('printBtn').disabled=false;
+    document.getElementById('cleanPlanBtn').disabled=false;document.getElementById('openEditorBtn').disabled=false;
+    renderTray();redraw();
+  }else{signs=[];renderTray()}
+  addressVerified=!!(rec.address||'').trim();
+  try{localStorage.setItem('bearclaw-last-project-id',id)}catch(e){}
+  projectLoading=false;openManual();
+  if(rec.baseDataUrl){step(2);openOnly('a2');setTimeout(fitView,100)}else{step(1);openOnly('a1')}
+  renderProjectHub();
+}
+async function openLastProject(){
+  let id='';try{id=localStorage.getItem('bearclaw-last-project-id')||''}catch(e){}
+  let rec=id?await projectGet(id):null;
+  if(!rec||rec.week!==weekKey()){const all=(await projectAll()).filter(x=>x.week===weekKey()).sort((a,b)=>b.updatedAt-a.updatedAt);rec=all[0]||null}
+  if(rec)loadProject(rec.id);else newProjectForDay(currentWeekdayIndex());
+}
+async function duplicateProject(id){
+  const src=await projectGet(id);if(!src)return;
+  const now=Date.now(),copyRec=JSON.parse(JSON.stringify(src));
+  copyRec.id=projectId();copyRec.day=currentWeekdayIndex();copyRec.week=weekKey();copyRec.createdAt=now;copyRec.updatedAt=now;
+  copyRec.jobName=(copyRec.jobName||'Hand-drawn TMP')+(lang==='fr'?' – copie':' – copy');
+  await projectPut(copyRec);loadProject(copyRec.id);
+}
+async function deleteSavedProject(id){
+  if(!confirm(lang==='fr'?'Supprimer ce projet enregistré ?':'Delete this saved project?'))return;
+  await projectDelete(id);
+  if(currentProjectId===id){currentProjectId=null;projectLoading=true;clearWorkingProject();projectLoading=false;backToModes()}
+  renderProjectHub();
+}
+async function resetWeekProjects(){
+  if(!confirm(lang==='fr'?'Effacer tous les projets de cette semaine ?':'Delete all projects from this week?'))return;
+  const all=await projectAll();for(const p of all)if(p.week===weekKey())await projectDelete(p.id);
+  currentProjectId=null;try{localStorage.removeItem('bearclaw-last-project-id')}catch(e){}
+  projectLoading=true;clearWorkingProject();projectLoading=false;renderProjectHub();backToModes();
+}
+async function renderProjectHub(){
+  const root=document.getElementById('weekProjects');if(!root)return;
+  const names=lang==='fr'?['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche']:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  const all=(await projectAll()).filter(x=>x.week===weekKey());
+  root.replaceChildren();
+  names.forEach((name,day)=>{
+    const card=document.createElement('div');card.className='dayCard';
+    const head=document.createElement('div');head.className='dayHead';
+    const b=document.createElement('b');b.textContent=name;
+    const add=document.createElement('button');add.textContent='+ Nouveau';add.onclick=()=>newProjectForDay(day);
+    head.append(b,add);card.append(head);
+    const list=document.createElement('div');list.className='dayProjects';
+    const projects=all.filter(x=>x.day===day).sort((a,b)=>b.updatedAt-a.updatedAt);
+    if(!projects.length){const empty=document.createElement('div');empty.className='emptyDay';empty.textContent=lang==='fr'?'Aucun projet':'No project';list.append(empty)}
+    projects.forEach(rec=>{
+      const row=document.createElement('div');row.className='projectRow';
+      const open=document.createElement('button');open.className='projectOpen';open.onclick=()=>loadProject(rec.id);
+      const strong=document.createElement('strong');strong.textContent=projectTitle(rec);
+      const small=document.createElement('small');small.textContent=projectTimestamp(rec.updatedAt);
+      open.append(strong,small);
+      if(rec.id===currentProjectId){const tag=document.createElement('span');tag.className='currentProjectTag';tag.textContent=lang==='fr'?'Projet ouvert':'Open project';open.append(tag)}
+      const dup=document.createElement('button');dup.className='projectMore';dup.textContent='⧉';dup.title=lang==='fr'?'Dupliquer':'Duplicate';dup.onclick=()=>duplicateProject(rec.id);
+      const del=document.createElement('button');del.className='projectMore';del.textContent='×';del.title=lang==='fr'?'Supprimer':'Delete';del.onclick=()=>deleteSavedProject(rec.id);
+      row.append(open,dup,del);list.append(row);
+    });
+    card.append(list);root.append(card);
+  });
+}
 const copy={
 fr:{
 addName:'Ajouter un nom',logout:'Déconnexion',resume:'Revenir à mon profil',sessionClosed:'Session fermée. Ton profil est conservé sur cet appareil.',pasteDispatch:'Coller le texte du dispatch',
 profileTitle:'Mon profil · Camion',techLabel:'Nom ou prénom',roleLabel:'Fonction (LCT, TCP…)',truckLabel:'Camion / Truck',profileHint:'Conservé sur cet appareil. Vérifie le camion avant chaque chantier.',profileUnavailable:'Stockage indisponible : le profil reste valable pour cette session uniquement.',preparedBy:'Préparé par',
-stepImport:'Importer',stepSigns:'Panneaux',stepExport:'Exporter',heroTitle:'Plan TMM en quelques minutes',heroText:'Importe ton plan propre, saisis l’adresse du chantier, puis ajoute les éléments TMM.',flowDispatch:'Screenshot',flowPlan:'Nettoie',flowSigns:'Panneaux',
-importTitle:'1. Importer le screenshot',importSub:'Importe le plan propre · saisis l’adresse · ouvre l’éditeur',dispatchTitle:'B. Dispatch (optionnel)',dispatchText:'Colle le dispatch seulement si tu veux récupérer automatiquement l’adresse.',dispatchButton:'Trouver l’adresse',dispatchWaiting:'Aucun dispatch importé.',jobLabel:'Nom du chantier / TMP',addressLabel:'Adresse du plan (optionnelle)',verifyButton:'Vérifier l’adresse',addressWaiting:'Facultatif : cette adresse sert uniquement au cartouche final.',footerHint:'Si tu la laisses vide, le plan reste utilisable et le cartouche n’affiche pas d’adresse.',planTitle:'Importer le plan propre',planText:'PNG ou JPG déjà nettoyé dans ChatGPT.',planButton:'Importer le plan',planLocked:'Aucun plan importé.',
-signsTitle:'2. Ajouter les panneaux TMM',signsSub:'Choisir → toucher le plan → glisser pour déplacer',regularSigns:'Panneaux réguliers',noneSelected:'Aucun panneau sélectionné.',importFirst:'Importe d’abord ton plan.',fieldTools:'Outils terrain',flaggerTool:'🚩 Signaleur',workTool:'▧ Zone de travaux',plotTool:'● Plot / point',duplicateTool:'⧉ Dupliquer',pickupLeftTool:'Pickup ←',pickupRightTool:'Pickup →',rotateTool:'↻ Tourner l’objet',sizeDown:'Taille −',sizeUp:'Taille +',toolHelp:'Sélectionne un élément placé, puis utilise Taille − / + ou tire sa poignée bleue.',workspace:'Plan de travail',fit:'Ajuster',fitView:'Vue ajustée au plan.',undo:'Annuler',redo:'Rétablir',delete:'Supprimer',done:'Terminer',moveTip:'Touche un élément pour le sélectionner. Déplace-le en le glissant. Pour le réduire, utilise Taille − ou tire la poignée bleue vers l’intérieur.',
+stepImport:'Importer',stepSigns:'Panneaux',stepExport:'Exporter',heroTitle:'Plan TMM en quelques minutes',heroText:'Importe ton screenshot, utilise Nettoie, puis ajoute les éléments TMM. L’adresse est facultative.',flowDispatch:'Screenshot',flowPlan:'Nettoie',flowSigns:'Panneaux',
+importTitle:'1. Importer le screenshot',importSub:'Adresse facultative · Nettoie · puis ouvre l’éditeur',dispatchTitle:'B. Dispatch (optionnel)',dispatchText:'Colle le dispatch seulement si tu veux récupérer automatiquement l’adresse.',dispatchButton:'Trouver l’adresse',dispatchWaiting:'Aucun dispatch importé.',jobLabel:'Nom du chantier / TMP',addressLabel:'Adresse du plan (optionnelle)',verifyButton:'Vérifier l’adresse',addressWaiting:'Facultatif : cette adresse sert uniquement au cartouche final.',footerHint:'Si tu la laisses vide, le plan reste utilisable et le cartouche n’affiche pas d’adresse.',planTitle:'A. Importer le screenshot / plan',planText:'PNG, JPG ou screenshot Google Maps. Aucune adresse n’est obligatoire.',planButton:'Importer l’image',planLocked:'Aucune image importée.',
+signsTitle:'2. Ajouter les panneaux TMM',signsSub:'Choisir → toucher le plan → glisser pour déplacer',regularSigns:'Panneaux réguliers',noneSelected:'Aucun panneau sélectionné.',importFirst:'Importe d’abord ton plan.',fieldTools:'Outils terrain',flaggerTool:'🚩 Signaleur',workTool:'▧ Zone de travaux',plotTool:'● Plot / point',duplicateTool:'⧉ Dupliquer',pickupLeftTool:'Pickup ←',pickupRightTool:'Pickup →',rotateTool:'↻ Tourner l’objet',objectSizeTitle:'Taille de l’objet sélectionné',sizeDown:'− Réduire',sizeUp:'+ Agrandir',toolHelp:'Touche un élément, puis utilise − Réduire ou + Agrandir.',workspace:'Plan de travail',fit:'Ajuster',fitView:'Vue ajustée au plan.',undo:'Annuler',redo:'Rétablir',delete:'Supprimer',done:'Terminer',moveTip:'Touche un élément pour le sélectionner. Déplace-le en le glissant. Pour changer sa taille, utilise − Réduire ou + Agrandir.',
 exportTitle:'3. Exporter',exportSub:'Enregistrer sur le téléphone puis envoyer dans Sidebox',savePdf:'Enregistrer PDF',printOnly:'Imprimer',savePng:'Enregistrer PNG',exportTip:'Mode impression clair : fond blanc, route éclaircie, éléments TMM nets, Nord séparé et cartouche à gauche.',newPlan:'Nouveau plan',
-chooseSign:'Choisir un panneau…',dispatchReading:'Lecture du dispatch…',dispatchFound:'Adresse trouvée : ',dispatchNotFound:'Adresse du chantier introuvable. Tu peux la saisir manuellement.',dispatchError:'Impossible de lire le dispatch. Saisis l’adresse manuellement.',verifying:'Vérification de l’adresse…',verified:'✓ Adresse vérifiée. Tu peux maintenant importer le plan.',verifyError:'Adresse non reconnue. Vérifie-la et réessaie.',planImported:'✓ Plan importé. Tu peux placer les éléments.',chooseTool:'Choisis un panneau ou un outil terrain.',placed:' placé.',selected:' sélectionné.',resizeHelp:'Utilise Taille − / + ou la poignée bleue.',noSize:'Sélectionne d’abord un élément placé.',deleteMode:'Mode suppression — touche l’élément à enlever.',placementDone:'Placement terminé.',confirmReset:'Commencer un nouveau plan ?',popup:'Autorise les fenêtres surgissantes pour imprimer le PDF.',elements:'élément',elementsPlural:'éléments',addressMissing:'Adresse du site : à compléter',horizontal:'Code horizontal.',vertical:'Code vertical.'
+chooseSign:'Choisir un panneau…',dispatchReading:'Lecture du dispatch…',dispatchFound:'Adresse trouvée : ',dispatchNotFound:'Adresse du chantier introuvable. Tu peux la saisir manuellement.',dispatchError:'Impossible de lire le dispatch. Saisis l’adresse manuellement.',verifying:'Vérification de l’adresse…',verified:'✓ Adresse vérifiée. Tu peux maintenant importer le plan.',verifyError:'Adresse non reconnue. Vérifie-la et réessaie.',planImported:'✓ Plan importé. Tu peux placer les éléments.',chooseTool:'Choisis un panneau ou un outil terrain.',placed:' placé.',selected:' sélectionné.',resizeHelp:'Utilise − Réduire ou + Agrandir.',noSize:'Sélectionne d’abord un élément placé.',deleteMode:'Mode suppression — touche l’élément à enlever.',placementDone:'Placement terminé.',confirmReset:'Commencer un nouveau plan ?',popup:'Autorise les fenêtres surgissantes pour imprimer le PDF.',elements:'élément',elementsPlural:'éléments',addressMissing:'Adresse du site : à compléter',horizontal:'Code horizontal.',vertical:'Code vertical.'
 },
 en:{
 addName:'Add name',logout:'Sign out',resume:'Return to my profile',sessionClosed:'Session closed. Your profile is saved on this device.',pasteDispatch:'Paste dispatch text',
 profileTitle:'My profile · Truck',techLabel:'Name',roleLabel:'Role (LCT, TCP…)',truckLabel:'Truck',profileHint:'Saved on this device. Check your truck before each job.',profileUnavailable:'Storage unavailable: profile retained for this session only.',preparedBy:'Prepared by',
-stepImport:'Import',stepSigns:'Signs',stepExport:'Export',heroTitle:'Build a TMM plan in minutes',heroText:'Import your clean plan, enter the job-site address, then add the TMM elements.',flowDispatch:'Screenshot',flowPlan:'Clean',flowSigns:'Signs',
-importTitle:'1. Import the screenshot',importSub:'Import the clean plan · enter the address · open the editor',dispatchTitle:'B. Dispatch (optional)',dispatchText:'Paste the dispatch only if you want to recover the address automatically.',dispatchButton:'Find address',dispatchWaiting:'No dispatch imported.',jobLabel:'Job / TMP name',addressLabel:'Plan address (optional)',verifyButton:'Verify address',addressWaiting:'Optional: this address is only used in the final title box.',footerHint:'Leave it blank and the plan still works; no address will be printed in the box.',planTitle:'Import the clean plan',planText:'PNG or JPG already cleaned in ChatGPT.',planButton:'Import plan',planLocked:'No plan imported.',
-signsTitle:'2. Add TMM signs',signsSub:'Choose → touch the plan → drag to move',regularSigns:'Regular Signs',noneSelected:'No sign selected.',importFirst:'Import your plan first.',fieldTools:'Field tools',flaggerTool:'🚩 Flagger',workTool:'▧ Work Area',plotTool:'● Plot / point',duplicateTool:'⧉ Duplicate',pickupLeftTool:'Pickup ←',pickupRightTool:'Pickup →',rotateTool:'↻ Rotate object',sizeDown:'Size −',sizeUp:'Size +',toolHelp:'Select a placed element, then use Size − / + or drag its blue handle.',workspace:'Working plan',fit:'Fit',fitView:'View fitted to plan.',undo:'Undo',redo:'Redo',delete:'Delete',done:'Done',moveTip:'Touch an element to select it. Drag to move it. To make it smaller, use Size − or pull the blue handle inward.',
+stepImport:'Import',stepSigns:'Signs',stepExport:'Export',heroTitle:'Build a TMM plan in minutes',heroText:'Import your screenshot, use Clean, then add the TMM elements. The address is optional.',flowDispatch:'Screenshot',flowPlan:'Clean',flowSigns:'Signs',
+importTitle:'1. Import the screenshot',importSub:'Optional address · Clean · then open the editor',dispatchTitle:'B. Dispatch (optional)',dispatchText:'Paste the dispatch only if you want to recover the address automatically.',dispatchButton:'Find address',dispatchWaiting:'No dispatch imported.',jobLabel:'Job / TMP name',addressLabel:'Plan address (optional)',verifyButton:'Verify address',addressWaiting:'Optional: this address is only used in the final title box.',footerHint:'Leave it blank and the plan still works; no address will be printed in the box.',planTitle:'A. Import screenshot / plan',planText:'PNG, JPG or Google Maps screenshot. No address is required.',planButton:'Import image',planLocked:'No image imported.',
+signsTitle:'2. Add TMM signs',signsSub:'Choose → touch the plan → drag to move',regularSigns:'Regular Signs',noneSelected:'No sign selected.',importFirst:'Import your plan first.',fieldTools:'Field tools',flaggerTool:'🚩 Flagger',workTool:'▧ Work Area',plotTool:'● Plot / point',duplicateTool:'⧉ Duplicate',pickupLeftTool:'Pickup ←',pickupRightTool:'Pickup →',rotateTool:'↻ Rotate object',objectSizeTitle:'Selected object size',sizeDown:'− Smaller',sizeUp:'+ Larger',toolHelp:'Touch an element, then use − Smaller or + Larger.',workspace:'Working plan',fit:'Fit',fitView:'View fitted to plan.',undo:'Undo',redo:'Redo',delete:'Delete',done:'Done',moveTip:'Touch an element to select it. Drag to move it. To change its size, use − Smaller or + Larger.',
 exportTitle:'3. Export',exportSub:'Save to your phone, then send it to Sidebox',savePdf:'Save PDF',printOnly:'Print',savePng:'Save PNG',exportTip:'Light print mode: white background, lightened roadway, crisp TMM elements, separate North marker and information box on the left.',newPlan:'New plan',
-chooseSign:'Choose a sign…',dispatchReading:'Reading dispatch…',dispatchFound:'Address found: ',dispatchNotFound:'Job-site address not found. You can enter it manually.',dispatchError:'The dispatch could not be read. Enter the address manually.',verifying:'Verifying address…',verified:'✓ Address verified. You can now import the plan.',verifyError:'Address not recognized. Check it and try again.',planImported:'✓ Plan imported. You can place elements.',chooseTool:'Choose a sign or field tool.',placed:' placed.',selected:' selected.',resizeHelp:'Use Size − / + or the blue handle.',noSize:'Select a placed element first.',deleteMode:'Delete mode — touch the element to remove.',placementDone:'Placement complete.',confirmReset:'Start a new plan?',popup:'Allow pop-ups to print the PDF.',elements:'element',elementsPlural:'elements',addressMissing:'Site address: to be completed',horizontal:'Horizontal code.',vertical:'Vertical code.'
+chooseSign:'Choose a sign…',dispatchReading:'Reading dispatch…',dispatchFound:'Address found: ',dispatchNotFound:'Job-site address not found. You can enter it manually.',dispatchError:'The dispatch could not be read. Enter the address manually.',verifying:'Verifying address…',verified:'✓ Address verified. You can now import the plan.',verifyError:'Address not recognized. Check it and try again.',planImported:'✓ Plan imported. You can place elements.',chooseTool:'Choose a sign or field tool.',placed:' placed.',selected:' selected.',resizeHelp:'Use − Smaller or + Larger.',noSize:'Select a placed element first.',deleteMode:'Delete mode — touch the element to remove.',placementDone:'Placement complete.',confirmReset:'Start a new plan?',popup:'Allow pop-ups to print the PDF.',elements:'element',elementsPlural:'elements',addressMissing:'Site address: to be completed',horizontal:'Horizontal code.',vertical:'Vertical code.'
 }};
 const signNames={
 fr:{'C-018-1A':'Travaux à venir','C-030-8':'Circulation à voie unique','C-029':'Préparez-vous à arrêter','C-001-1':'Signaleur / TCP','C-053':'Flèche de fermeture de voie','C-202':'Trottoir fermé','C-130-L':'Voie gauche fermée','C-130-R':'Voie droite fermée','R-012':'Route fermée','R-015-R':'Virage à droite interdit','R-015-L':'Virage à gauche interdit'},
@@ -243,7 +423,7 @@ function setModeLabels(){const fr=lang==='fr',set=(id,a,b)=>{const el=document.g
 function backToModes(){document.getElementById('modeChooser').hidden=false;document.getElementById('tmmModule').hidden=true;document.getElementById('imageModule').hidden=true;document.getElementById('manualFlow').hidden=true;document.querySelector('header .steps').style.display='none';window.scrollTo(0,0)}
 function openTmm(){document.getElementById('modeChooser').hidden=true;document.getElementById('imageModule').hidden=true;document.getElementById('manualFlow').hidden=true;document.getElementById('tmmModule').hidden=false;document.querySelector('header .steps').style.display='none';renderTmmFigures();window.scrollTo(0,0)}
 function openImages(){document.getElementById('modeChooser').hidden=true;document.getElementById('tmmModule').hidden=true;document.getElementById('manualFlow').hidden=true;document.getElementById('imageModule').hidden=false;document.querySelector('header .steps').style.display='none';renderImagePicker();window.scrollTo(0,0)}
-function openManual(){document.getElementById('modeChooser').hidden=true;document.getElementById('tmmModule').hidden=true;document.getElementById('imageModule').hidden=true;document.getElementById('manualFlow').hidden=false;document.querySelector('header .steps').style.display='grid';window.scrollTo(0,0)}
+function openManual(){if(!currentProjectId)ensureCurrentProject();document.getElementById('modeChooser').hidden=true;document.getElementById('tmmModule').hidden=true;document.getElementById('imageModule').hidden=true;document.getElementById('manualFlow').hidden=false;document.querySelector('header .steps').style.display='grid';window.scrollTo(0,0)}
 function selectTmmSection(section,button){tmmSection=section;document.querySelectorAll('#tmmModule .tmmSection').forEach(b=>b.classList.remove('active'));if(button)button.classList.add('active');document.getElementById('tmmDetail').hidden=true;renderTmmFigures()}
 function renderTmmFigures(){const q=(document.getElementById('tmmSearch').value||'').toLowerCase(),list=document.getElementById('tmmList');list.innerHTML='';tmmFigures[tmmSection].filter(x=>x.join(' ').toLowerCase().includes(q)).forEach(x=>{const b=document.createElement('button');b.className='tmmFigure';const title=document.createElement('b');title.textContent=x[0]+' — '+x[1];const sub=document.createElement('span');sub.textContent=x[2];b.append(title,sub);b.onclick=()=>showTmmDetail(x);list.appendChild(b)});if(!list.children.length)list.innerHTML='<div class="status">'+(lang==='fr'?'Aucune figure trouvée.':'No figure found.')+'</div>'}
 function pdfDocument(){return Promise.reject(new Error('Local image mode'))}
@@ -260,7 +440,7 @@ function setLanguage(next){
  document.querySelectorAll('[data-i18n]').forEach(el=>{const key=el.dataset.i18n;if(copy[lang][key])el.textContent=copy[lang][key]});
  document.querySelectorAll('[data-ph-fr]').forEach(el=>el.placeholder=el.getAttribute('data-ph-'+lang));
  document.getElementById('langFr').classList.toggle('active',lang==='fr');document.getElementById('langEn').classList.toggle('active',lang==='en');
- renderSignOptions();renderTray();setModeLabels();if(base)redraw();
+ renderSignOptions();renderTray();setModeLabels();renderProjectHub();if(base)redraw();
 }
 function renderSignOptions(){const select=document.getElementById('signSelect'),current=select.value;select.innerHTML='<option value="">'+t('chooseSign')+'</option>'+signCodes.map(code=>'<option value="'+code+'">'+signNames[lang][code]+' — '+code+'</option>').join('');select.value=current}
 function closeSplash(){document.getElementById('splash').classList.add('hide')}
@@ -269,13 +449,26 @@ function toggleAcc(b){b.closest('.acc').classList.toggle('open')}
 function openOnly(id){document.querySelectorAll('.acc').forEach(x=>x.classList.remove('open'));document.getElementById(id).classList.add('open');setTimeout(()=>document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'}),80)}
 function step(n){for(let i=1;i<=3;i++){const e=document.getElementById('st'+i);e.classList.remove('active','done');if(i<n)e.classList.add('done');else if(i===n)e.classList.add('active')}}
 function fileToDataUrl(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file)})}
-function invalidateAddress(){addressVerified=!!document.getElementById('siteAddress').value.trim();const s=document.getElementById('addressStatus');s.textContent=lang==='fr'?'Cette adresse apparaîtra dans le cartouche du plan final.':'This address will appear in the final plan title box.';s.className='verifyState';redraw()}
+async function extractDispatchAddress(ev){
+ const file=ev.target.files&&ev.target.files[0];if(!file)return;const s=document.getElementById('dispatchStatus');s.className='verifyState';s.innerHTML='<span class="working"></span>'+t('dispatchReading');
+ try{
+   const fileDataUrl=await fileToDataUrl(file);const r=await fetch('/api/dispatch-address',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fileDataUrl})});const data=await r.json();
+   if(!r.ok)throw new Error(data.message||data.error);if(!data.address){s.textContent=t('dispatchNotFound');s.className='verifyState bad';return}
+   document.getElementById('siteAddress').value=data.address;s.textContent=t('dispatchFound')+data.address;s.className='verifyState good';invalidateAddress();await verifyAddress(true);
+ }catch(e){console.error(e);s.textContent=t('dispatchError');s.className='verifyState bad'}
+}
+function invalidateAddress(){addressVerified=!!document.getElementById('siteAddress').value.trim();const s=document.getElementById('addressStatus');s.textContent=lang==='fr'?'Facultatif : cette adresse sert uniquement au cartouche final.':'Optional: this address is only used in the final title box.';s.className='verifyState';redraw()}
+async function verifyAddress(){invalidateAddress();return addressVerified}
 async function setBaseFromDataUrl(dataUrl){
  return await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>{const max=2400;let w=img.naturalWidth,h=img.naturalHeight,s=Math.min(1,max/Math.max(w,h));w=Math.round(w*s);h=Math.round(h*s);c.width=w;c.height=h;const x=c.getContext('2d');x.clearRect(0,0,w,h);x.drawImage(img,0,0,w,h);base=document.createElement('canvas');base.width=w;base.height=h;base.getContext('2d').drawImage(c,0,0);signs=[];selected=[];active='';deleting=false;dragging=-1;resizing=-1;drawingIndex=-1;selectedIndex=-1;renderTray();redraw();resolve()};img.onerror=reject;img.src=dataUrl})
 }
 async function loadImage(ev){
  const f=ev.target.files&&ev.target.files[0];if(!f)return;
- try{const dataUrl=await fileToDataUrl(f);await setBaseFromDataUrl(dataUrl);document.getElementById('openEditorBtn').disabled=false;document.getElementById('importStatus').innerHTML='<span class="ok">'+(lang==='fr'?'✓ Plan importé. Saisis l’adresse puis ouvre l’éditeur.':'✓ Plan imported. Enter the address, then open the editor.')+'</span>'}catch(e){console.error(e);document.getElementById('importStatus').textContent=lang==='fr'?'Impossible d’importer ce plan.':'Unable to import this plan.'}
+ try{const dataUrl=await fileToDataUrl(f);await setBaseFromDataUrl(dataUrl);document.getElementById('cleanPlanBtn').disabled=false;document.getElementById('openEditorBtn').disabled=false;document.getElementById('importStatus').innerHTML='<span class="ok">'+(lang==='fr'?'✓ Image importée. Tu peux maintenant cliquer sur Nettoie.':'✓ Image imported. You can now tap Clean.')+'</span>';document.getElementById('cleanStatus').textContent=lang==='fr'?'Prêt à nettoyer : fond clair, routes lisibles, sortie paysage.':'Ready to clean: light background, readable roads, landscape output.';document.getElementById('cleanStatus').className='verifyState good'}catch(e){console.error(e);document.getElementById('importStatus').textContent=lang==='fr'?'Impossible d’importer cette image.':'Unable to import this image.'}
+}
+async function cleanImportedPlan(){
+ if(!base)return;const btn=document.getElementById('cleanPlanBtn'),s=document.getElementById('cleanStatus');btn.disabled=true;s.innerHTML='<span class="working"></span>'+(lang==='fr'?'Nettoyage du plan…':'Cleaning plan…');s.className='verifyState';
+ try{const imageDataUrl=base.toDataURL('image/jpeg',.9);const r=await fetch('/api/clean-plan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageDataUrl,aspect:'4:3',correction:'Sortie paysage. Fond blanc. Routes blanches ou gris très clair, contours noirs fins, noms de rues noirs. Aucune zone sombre remplie. Rendu optimisé pour impression noir et blanc en voiture.'})});const data=await r.json();if(!r.ok||!data.dataUrl)throw new Error(data.message||data.error||'clean_failed');await setBaseFromDataUrl(data.dataUrl);document.getElementById('openEditorBtn').disabled=false;s.textContent=lang==='fr'?'✓ Plan nettoyé et éclairci. Tu peux ouvrir l’éditeur.':'✓ Plan cleaned and lightened. You can open the editor.';s.className='verifyState good';document.getElementById('importStatus').innerHTML='<span class="ok">'+(lang==='fr'?'✓ Plan propre prêt.':'✓ Clean plan ready.')+'</span>'}catch(e){console.error(e);s.textContent=(lang==='fr'?'Nettoyage indisponible pour le moment. Tu peux quand même ouvrir l’éditeur avec l’image importée.':'Cleaning is unavailable right now. You can still open the editor with the imported image.');s.className='verifyState bad'}finally{btn.disabled=false}
 }
 function openEditorFromImport(){if(!base)return;document.getElementById('workspace').classList.add('show');document.getElementById('pngBtn').disabled=false;document.getElementById('pdfBtn').disabled=false;document.getElementById('printBtn').disabled=false;document.getElementById('signStatus').textContent=t('chooseTool');step(2);openOnly('a2');setTimeout(fitView,120)}
 function chooseSign(code){if(!code)return;if(!base){document.getElementById('signStatus').textContent=t('importFirst');document.getElementById('signSelect').value='';return}if(!selected.includes(code))selected.push(code);active=code;selectedIndex=-1;deleting=false;clearToolButtons();document.getElementById('deleteBtn').classList.remove('deleteOn');document.getElementById('signSelect').value='';renderTray();status()}
@@ -293,8 +486,8 @@ function elementLabel(s){if(!s)return'';if(s.code)return signNames[lang][s.code]
 function getBounds(s){const k=markerK(c.getContext('2d')),u=s.userScale||1;if(s.type==='workarea'){const rot=Math.abs((s.rotation||0)%180)===90,hw=(rot?s.h:s.w)/2,hh=(rot?s.w:s.h)/2;return{x1:s.x-hw,y1:s.y-hh,x2:s.x+hw,y2:s.y+hh}}if(s.type==='distance')return{x1:s.x-66*k*u,y1:s.y-34*k*u,x2:s.x+66*k*u,y2:s.y+34*k*u};if(s.type==='flagger')return{x1:s.x-34*k*u,y1:s.y-48*k*u,x2:s.x+34*k*u,y2:s.y+52*k*u};if(s.type==='plot')return{x1:s.x-15*k*u,y1:s.y-15*k*u,x2:s.x+15*k*u,y2:s.y+15*k*u};if(s.type==='pickupLeft'||s.type==='pickupRight')return{x1:s.x-72*k*u,y1:s.y-62*k*u,x2:s.x+72*k*u,y2:s.y+62*k*u};if(s.type==='sign'){const kind=signKinds[s.code]||'warning',reg=kind==='regulatory'||kind==='noTurnRight'||kind==='noTurnLeft',arrow=kind==='arrowSign';const hw=(reg||arrow?72:58)*k*u,hh=(reg||arrow?50:66)*k*u;return{x1:s.x-hw,y1:s.y-hh,x2:s.x+hw,y2:s.y+hh}}return{x1:s.x-42*k*u,y1:s.y-48*k*u,x2:s.x+42*k*u,y2:s.y+48*k*u}}
 function segmentDistance(p,a,b){const dx=b.x-a.x,dy=b.y-a.y,l=dx*dx+dy*dy;if(!l)return Math.hypot(p.x-a.x,p.y-a.y);const t=Math.max(0,Math.min(1,((p.x-a.x)*dx+(p.y-a.y)*dy)/l)),x=a.x+t*dx,y=a.y+t*dy;return Math.hypot(p.x-x,p.y-y)}
 function hit(p){const tolerance=Math.max(16,c.width*.012);for(let i=signs.length-1;i>=0;i--){const s=signs[i],b=getBounds(s);if(p.x<b.x1||p.x>b.x2||p.y<b.y1||p.y>b.y2)continue;if(isLinearShape(s)){if(segmentDistance(p,{x:s.x,y:s.y},{x:s.x2,y:s.y2})<=tolerance)return i;continue}if(s.type==='curve'&&s.points){for(let j=1;j<s.points.length;j++)if(segmentDistance(p,s.points[j-1],s.points[j])<=tolerance)return i;continue}return i}return -1}
-function isResizeHandle(s,p){if(!s||isDrawingShape(s))return false;const b=getBounds(s),r=Math.max(22,c.width*.015);return Math.hypot(p.x-b.x2,p.y-b.y2)<r}
-function drawSelection(ctx,s){const b=getBounds(s),k=markerK(ctx),hs=13*k;ctx.save();ctx.strokeStyle='#1479ff';ctx.lineWidth=3*k;ctx.setLineDash([9*k,6*k]);ctx.strokeRect(b.x1,b.y1,b.x2-b.x1,b.y2-b.y1);ctx.setLineDash([]);if(!isDrawingShape(s)){ctx.fillStyle='#1479ff';ctx.strokeStyle='#fff';ctx.lineWidth=2*k;ctx.fillRect(b.x2-hs,b.y2-hs,hs*2,hs*2);ctx.strokeRect(b.x2-hs,b.y2-hs,hs*2,hs*2)}ctx.restore()}
+function isResizeHandle(s,p){return false}
+function drawSelection(ctx,s){const b=getBounds(s),k=markerK(ctx);ctx.save();ctx.strokeStyle='#1479ff';ctx.lineWidth=3*k;ctx.setLineDash([9*k,6*k]);ctx.strokeRect(b.x1,b.y1,b.x2-b.x1,b.y2-b.y1);ctx.setLineDash([]);ctx.restore()}
 function signCodeTag(ctx,code,k,y){ctx.save();ctx.font='800 '+Math.max(8,Math.round(9*k))+'px Arial';const w=Math.max(52*k,ctx.measureText(code).width+12*k);ctx.fillStyle='rgba(255,255,255,.96)';ctx.strokeStyle='#111';ctx.lineWidth=1.3*k;ctx.beginPath();ctx.roundRect(-w/2,y-9*k,w,18*k,5*k);ctx.fill();ctx.stroke();ctx.fillStyle='#111';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(code,0,y);ctx.restore()}
 function diamondBase(ctx,k){ctx.save();ctx.rotate(Math.PI/4);ctx.fillStyle='#f39a1f';ctx.strokeStyle='#111';ctx.lineWidth=3*k;ctx.fillRect(-39*k,-39*k,78*k,78*k);ctx.strokeRect(-39*k,-39*k,78*k,78*k);ctx.restore()}
 function centeredSignText(ctx,lines,k,size=13){ctx.fillStyle='#111';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='900 '+Math.round(size*k)+'px Arial';const step=(size+2)*k;lines.forEach((ln,i)=>ctx.fillText(ln,0,(i-(lines.length-1)/2)*step))}
@@ -321,8 +514,17 @@ function addProfileName(){const input=document.getElementById('newTechName'),nam
 function loadProfile(){let p={};try{p=JSON.parse(localStorage.getItem('bearclaw-tmm-profile')||'{}')}catch(e){}const names=savedNames();if(typeof p.name==='string'&&p.name)names.push(p.name);renderNames(names,p.name);document.getElementById('techRole').value=p.role||'';document.getElementById('truckNumber').value=p.truck?String(Number(p.truck)):'';if(p.name)document.getElementById('profilePanel').open=false}
 function updateSessionUI(){const closed=document.querySelector('main').hidden;document.getElementById('sessionState').textContent=closed?'':(lang==='fr'?'● Connecté':'● Signed in');const button=document.getElementById('sessionButton');button.dataset.closed=String(closed);button.textContent='● '+(closed?(lang==='fr'?'Connexion':'Sign In'):(lang==='fr'?'Déconnexion':'Sign Out'))}
 function toggleSession(){if(document.querySelector('main').hidden)resumeProfile();else logoutProfile()}
-function logoutProfile(){saveProfile();document.querySelector('main').hidden=true;document.getElementById('sessionGate').hidden=false;try{sessionStorage.setItem('bearclaw-local-closed','1')}catch(e){}updateSessionUI()}
+function logoutProfile(){saveCurrentProjectNow();saveProfile();document.querySelector('main').hidden=true;document.getElementById('sessionGate').hidden=false;try{sessionStorage.setItem('bearclaw-local-closed','1')}catch(e){}updateSessionUI()}
 function resumeProfile(){document.querySelector('main').hidden=false;document.getElementById('sessionGate').hidden=true;document.getElementById('profilePanel').open=true;try{sessionStorage.removeItem('bearclaw-local-closed')}catch(e){}updateSessionUI()}
+function addressFromDispatch(text){
+ const lines=text.replace(/\r/g,'').split('\n').map(s=>s.trim()).filter(Boolean);
+ const tagged=lines.find(s=>/^(?:job\s*(?:site|location)|site\s*address|location|address|adresse|lieu)\s*:/i.test(s));
+ if(tagged)return tagged.replace(/^[^:]+:\s*/,'').split(/\s+(?:contact|supervisor|start time|instructions)\s*:/i)[0].trim();
+ const cleaned=text.replace(/\r/g,'').replace(/\bjob at\s+\d{4}\b/ig,'');
+ const m=cleaned.match(/\b\d{2,6}[-\s]+[^\n]{0,70}?\b(?:avenue|ave|street|st|road|rd|drive|dr|boulevard|blvd|highway|hwy|way|crescent|cres|lane|ln)\b[^\n]*/i);
+ return m?m[0].split(/\s+(?:do|contact|with|bring|report|start|meet)\b/i)[0].trim():'';
+}
+async function readDispatchText(){const address=addressFromDispatch(document.getElementById('dispatchText').value);const status=document.getElementById('dispatchStatus');invalidateAddress();if(!address){status.textContent=t('dispatchNotFound');status.className='verifyState bad';return}document.getElementById('siteAddress').value=address;status.textContent=t('dispatchFound')+address;status.className='verifyState good';await verifyAddress();}
 function drawCartouche(ctx){
  const k=Math.min(1.65,ctx.canvas.width/1000),margin=12*k,fw=340*k,fh=104*k,x=margin,y=ctx.canvas.height-fh-margin;
  const p=profileValues(),title=document.getElementById('jobName').value.trim()||'Hand-drawn TMP',addr=document.getElementById('siteAddress').value.trim();
@@ -334,7 +536,7 @@ function drawCartouche(ctx){
  for(const [value,font,dy] of rows){const fs=fitText(ctx,value,max,font*k,8*k);ctx.font='700 '+fs+'px Arial';ctx.fillText(value,tx,y+dy*k,max)}
  ctx.restore();
 }
-function redraw(){if(!base)return;const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.drawImage(base,0,0);signs.forEach((s,i)=>drawMarker(ctx,s,i));drawNorth(ctx);drawCartouche(ctx);const n=signs.length;document.getElementById('count').textContent=n+' '+(n===1?t('elements'):t('elementsPlural'))}
+function redraw(){if(!base)return;const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.drawImage(base,0,0);signs.forEach((s,i)=>drawMarker(ctx,s,i));drawNorth(ctx);drawCartouche(ctx);const n=signs.length;document.getElementById('count').textContent=n+' '+(n===1?t('elements'):t('elementsPlural'));scheduleProjectAutosave()}
 function updateZoom(){if(!base)return;c.style.width=Math.round(c.width*viewScale)+'px';c.style.height=Math.round(c.height*viewScale)+'px';document.getElementById('zoomStatus').textContent=Math.round(viewScale*100)+' %'}
 function zoomIn(){viewScale=Math.min(3,viewScale+.2);updateZoom()}
 function zoomOut(){viewScale=Math.max(.2,viewScale-.2);updateZoom()}
@@ -388,20 +590,32 @@ function toggleDelete(){if(!base)return;deleting=!deleting;active='';selectedInd
 function stopMode(){active='';deleting=false;selectedIndex=-1;clearToolButtons();document.getElementById('deleteBtn').classList.remove('deleteOn');renderTray();document.getElementById('signStatus').textContent=t('placementDone');redraw();step(3);openOnly('a3')}
 function buildLightExportCanvas(){const out=document.createElement('canvas');out.width=c.width;out.height=c.height;const ctx=out.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,out.width,out.height);ctx.save();ctx.filter='grayscale(1) brightness(1.55) contrast(.68)';ctx.globalAlpha=.82;ctx.drawImage(base,0,0);ctx.restore();signs.forEach((s,i)=>drawMarker(ctx,s,-1));drawNorth(ctx);drawCartouche(ctx);return out}
 function exportBaseName(){const el=document.getElementById('exportFileName');let name=(el&&el.value?el.value:'Bearclaw-TMM-plan').trim().replace(/[\\/:*?"<>|]+/g,'-').replace(/\s+/g,'-').replace(/^-+|-+$/g,'');return name||'Bearclaw-TMM-plan'}
-function downloadPNG(){if(!base)return;selectedIndex=-1;redraw();step(3);const out=buildLightExportCanvas(),a=document.createElement('a');a.download=exportBaseName()+'.png';a.href=out.toDataURL('image/png');a.click()}
+function showExportPreview(kind,url,filename,w){
+ const back=lang==='fr'?'← Retour à l’application':'← Back to app';
+ const download=lang==='fr'?'Télécharger dans Fichiers':'Download to Files';
+ const open=lang==='fr'?'Ouvrir le fichier':'Open file';
+ const note=lang==='fr'?'Sur iPhone, le téléchargement va généralement dans le dossier Téléchargements de l’app Fichiers. Tu peux ensuite le déplacer où tu veux.':'On iPhone, downloads normally go to the Downloads folder in Files. You can move the file afterward.';
+ const media=kind==='png'?'<img src="'+url+'" alt="Bearclaw TMM Plan">':'<iframe src="'+url+'" title="Bearclaw TMM PDF"></iframe>';
+ w.document.write('<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>'+filename+'</title><style>*{box-sizing:border-box}html,body{margin:0;background:#111;color:#fff;font-family:Arial,sans-serif}.bar{position:sticky;top:0;z-index:5;display:flex;gap:8px;flex-wrap:wrap;padding:calc(10px + env(safe-area-inset-top)) 10px 10px;background:#111}.bar button,.bar a{border:0;border-radius:11px;padding:11px 13px;font-weight:900;text-decoration:none}.back{background:#27323a;color:#fff}.save{background:#f3bd3d;color:#111}.open{background:#1f2a31;color:#fff}.note{padding:8px 12px;color:#b9c2c8;font-size:12px;line-height:1.4}.view{background:#fff;min-height:75vh;display:flex;align-items:center;justify-content:center}.view img{max-width:100%;height:auto}.view iframe{width:100%;height:78vh;border:0;background:#fff}</style></head><body><div class="bar"><button class="back" onclick="window.close()">'+back+'</button><a class="save" href="'+url+'" download="'+filename+'">'+download+'</a><a class="open" href="'+url+'" target="_blank">'+open+'</a></div><div class="note">'+note+'</div><div class="view">'+media+'</div></body></html>');
+ w.document.close();
+}
+function downloadPNG(){
+ if(!base)return;selectedIndex=-1;redraw();step(3);
+ const w=window.open('','_blank');if(!w){alert(t('popup'));return}
+ const out=buildLightExportCanvas(),filename=exportBaseName()+'.png',url=out.toDataURL('image/png');
+ showExportPreview('png',url,filename,w);
+}
 async function savePDF(){
  if(!base)return;selectedIndex=-1;redraw();step(3);
- if(!window.jspdf||!window.jspdf.jsPDF){alert(lang==='fr'?'Le module PDF n’est pas disponible. Recharge la page et réessaie.':'The PDF module is unavailable. Reload the page and try again.');return}
+ const w=window.open('','_blank');if(!w){alert(t('popup'));return}
+ if(!window.jspdf||!window.jspdf.jsPDF){w.close();alert(lang==='fr'?'Le module PDF n’est pas disponible. Recharge la page et réessaie.':'The PDF module is unavailable. Reload the page and try again.');return}
  const out=buildLightExportCanvas(),jsPDF=window.jspdf.jsPDF,orientation=out.width>=out.height?'landscape':'portrait';
  const pdf=new jsPDF({orientation,unit:'mm',format:'a4',compress:true});
- const pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight(),margin=6,maxW=pageW-margin*2,maxH=pageH-margin*2,ratio=Math.min(maxW/out.width,maxH/out.height),w=out.width*ratio,h=out.height*ratio,x=(pageW-w)/2,y=(pageH-h)/2;
- pdf.addImage(out.toDataURL('image/jpeg',.94),'JPEG',x,y,w,h,undefined,'FAST');
- const filename=exportBaseName()+'.pdf';
- try{
-   const blob=pdf.output('blob'),file=new File([blob],filename,{type:'application/pdf'});
-   if((/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))&&navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'Bearclaw TMM Plan'});return}
- }catch(e){if(e&&e.name==='AbortError')return}
- pdf.save(filename);
+ const pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight(),margin=6,maxW=pageW-margin*2,maxH=pageH-margin*2,ratio=Math.min(maxW/out.width,maxH/out.height),ww=out.width*ratio,hh=out.height*ratio,x=(pageW-ww)/2,y=(pageH-hh)/2;
+ pdf.addImage(out.toDataURL('image/jpeg',.94),'JPEG',x,y,ww,hh,undefined,'FAST');
+ const filename=exportBaseName()+'.pdf',blob=pdf.output('blob'),url=URL.createObjectURL(blob);
+ showExportPreview('pdf',url,filename,w);
+ setTimeout(()=>URL.revokeObjectURL(url),10*60*1000);
 }
 function printPDF(){
  if(!base)return;selectedIndex=-1;redraw();step(3);
@@ -412,7 +626,7 @@ function printPDF(){
  w.document.write('<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Bearclaw TMM Plan — Print Preview</title><style>@page{size:landscape;margin:6mm}*{box-sizing:border-box}html,body{margin:0;background:#111;color:#fff;font-family:Arial,sans-serif}.bar{position:sticky;top:0;z-index:10;display:flex;gap:10px;align-items:center;justify-content:space-between;padding:calc(10px + env(safe-area-inset-top)) 12px 10px;background:#111;border-bottom:1px solid #333}.bar button{border:0;border-radius:12px;padding:12px 16px;font-size:16px;font-weight:800}.back{background:#2b3136;color:#fff}.print{background:#f5bd3d;color:#111}.sheet{min-height:calc(100vh - 72px);display:flex;align-items:center;justify-content:center;background:#fff;padding:10px}.sheet img{display:block;max-width:100%;max-height:calc(100vh - 92px);object-fit:contain;filter:grayscale(100%)}@media print{.bar{display:none}.sheet{padding:0;min-height:100vh}.sheet img{max-height:100vh}}</style></head><body><div class="bar"><button class="back" onclick="try{if(window.opener&&!window.opener.closed){window.close()}else if(history.length>1){history.back()}else{window.close()}}catch(e){history.back()}">'+backLabel+'</button><button class="print" onclick="window.print()">'+printLabel+'</button></div><div class="sheet"><img src="'+u+'" alt="Bearclaw TMM Plan"></div></body></html>');
  w.document.close();
 }
-function resetPlan(){if(!confirm(t('confirmReset')))return;base=null;signs=[];redoSigns=[];selected=[];active='';deleting=false;dragging=-1;resizing=-1;drawingIndex=-1;selectedIndex=-1;viewScale=1;addressVerified=false;clearToolButtons();document.getElementById('workspace').classList.remove('show');document.getElementById('file').value='';document.getElementById('siteAddress').value='';document.getElementById('pngBtn').disabled=true;document.getElementById('pdfBtn').disabled=true;document.getElementById('printBtn').disabled=true;document.getElementById('openEditorBtn').disabled=true;document.getElementById('addressStatus').textContent=lang==='fr'?'Cette adresse apparaîtra dans le cartouche du plan final.':'This address will appear in the final plan title box.';document.getElementById('addressStatus').className='verifyState';document.getElementById('importStatus').textContent=t('planLocked');renderTray();step(1);openOnly('a1')}
+function resetPlan(){if(!confirm(lang==='fr'?'Créer un nouveau projet ? Le projet actuel restera enregistré.':'Create a new project? The current project will stay saved.'))return;newProjectForDay(currentWeekdayIndex())}
 loadProfile();
 try{if(sessionStorage.getItem('bearclaw-local-closed')==='1'){document.querySelector('main').hidden=true;document.getElementById('sessionGate').hidden=false}}catch(e){}
 let storedLanguage='fr';try{storedLanguage=localStorage.getItem('bearclaw-tmm-lang')||'fr'}catch(e){}
