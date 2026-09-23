@@ -26,6 +26,16 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
 .planMetaMargin{margin-top:9px;background:#fff;color:#111;border:1px solid #c9cfd3;border-radius:12px;padding:9px 11px;display:flex;align-items:flex-start;gap:10px;min-height:82px}
 .planMetaMargin img{width:54px;height:54px;object-fit:contain;flex:0 0 auto}
 .planMetaText{min-width:0;line-height:1.18}.planMetaText strong{display:block;font-size:11px}.planMetaLine{font-size:10px;font-weight:750;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.planMetaSmall{font-size:9px;font-weight:700;margin-top:3px;color:#31363a}
+.fieldToolsAccordion{margin:10px 0 12px;border:1px solid #34434d;border-radius:12px;background:#10181d;overflow:hidden}
+.fieldToolsAccordion>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 13px;color:#fff}
+.fieldToolsAccordion>summary::-webkit-details-marker{display:none}
+.fieldToolsSummaryText{display:flex;flex-direction:column;gap:2px;min-width:0}
+.fieldToolsSummaryText strong{font-size:13px}
+.fieldToolsSummaryText small{font-size:9px;line-height:1.3;color:#99a6ae;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fieldToolsChevron{font-size:18px;transition:transform .18s ease}
+.fieldToolsAccordion[open] .fieldToolsChevron{transform:rotate(180deg)}
+.fieldToolsBody{padding:10px 11px 11px;border-top:1px solid #2d3941}
+
 .splash{position:fixed;inset:0;z-index:999;background:#080c0f;display:grid;place-items:center;transition:opacity .55s ease,visibility .55s ease;animation:splashFailsafe .01s 2.7s forwards}.splash.hide{opacity:0;visibility:hidden;pointer-events:none}@keyframes splashFailsafe{to{opacity:0;visibility:hidden;pointer-events:none}}.splashInner{position:relative;text-align:center;animation:splashRise .65s ease both}.splash img{width:166px;height:166px;object-fit:contain;background:#080c0f;border-radius:50%}.splashTitle{font-size:25px;font-weight:950;letter-spacing:.2em;margin-top:12px}.splashSub{font-size:10px;letter-spacing:.15em;color:#c8d0d5;margin-top:7px}.introBar{width:112px;height:5px;margin:20px auto 0;background:#e4e4e4;border-radius:999px;overflow:hidden}.introBar span{display:block;width:100%;height:100%;background:linear-gradient(90deg,#c9262b 0%,#f06a20 48%,#f4bf2a 100%);transform-origin:left;animation:introFill 1.25s .25s ease-in-out both}@keyframes introFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}@keyframes splashRise{from{opacity:0}to{opacity:1}}
 .dispatchBox{border:1px solid #34424c;background:#10171c;border-radius:13px;padding:12px;margin-bottom:11px}.dispatchBox h3{font-size:13px;margin:0 0 4px}.dispatchBox p{font-size:10px;line-height:1.4;color:#98a5ad;margin:0 0 10px}.dispatchRow{display:flex;gap:7px;flex-wrap:wrap}.dispatchRow .fileBtn,.dispatchRow .btn{flex:1;min-width:135px;text-align:center}.verifyState{font-size:10px;margin-top:8px;color:#9eabb3}.verifyState.good{color:#8bd8ad;font-weight:900}.verifyState.bad{color:#ff9a93}.planLocked{opacity:.48;pointer-events:none}.sizeControls{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px}.sizeControls .btn{min-height:39px}.sectionDivider{height:1px;background:#2b3740;margin:13px 0}.working{display:inline-block;width:13px;height:13px;border:2px solid #5d6971;border-top-color:var(--yellow);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:5px}@keyframes spin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.splashInner,.introBar span{animation:none}.splash{transition:none}}
@@ -80,11 +90,11 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
   <section id="modeChooser" class="modeChooser">
     <h2 id="modeTitle">Choisir le mode de travail</h2>
     <p id="modeText">Consulte les figures officielles pour préparer ton setup, ou crée directement ton plan terrain.</p>
-    <div class="miniNote" style="margin:0 0 10px;color:#f3bd3d;font-weight:900">V60 · Images TMM restaurées · image Sideoc · cartouche hors plan · zoom − / +</div>
+    <div class="miniNote" style="margin:0 0 10px;color:#f3bd3d;font-weight:900">V61 · Sans Dispatch · outils terrain en accordéon · images TMM · Sideoc</div>
     <div class="modeGrid">
       <button class="modeCard" onclick="openTmm()"><b id="modeTmmTitle">📘 Figures TMM / MOT</b><span id="modeTmmText">Sections 7, 8 et 9 avec recherche par figure et image officielle.</span></button>
       <button class="modeCard" onclick="openImages()"><b id="modeImagesTitle">🖼️ Images seulement</b><span id="modeImagesText">Afficher les figures officielles en grand, une image à la fois.</span></button>
-      <button class="modeCard" onclick="openManual()"><b id="modeManualTitle">✏️ Plan manuel</b><span id="modeManualText">Dispatch, adresse, import du plan et placement des panneaux.</span></button>
+      <button class="modeCard" onclick="openManual()"><b id="modeManualTitle">✏️ Plan manuel</b><span id="modeManualText">Screenshot, adresse et placement des panneaux.</span></button>
     </div>
   </section>
   <section id="tmmModule" class="tmmModule" hidden>
@@ -138,16 +148,6 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
         <div class="fieldHint" data-i18n="footerHint">Si tu la laisses vide, le plan reste utilisable et le cartouche n’affiche pas d’adresse.</div>
       </div>
 
-      <div class="sectionDivider"></div>
-
-      <div class="dispatchBox">
-        <h3 data-i18n="dispatchTitle">B. Dispatch (optionnel)</h3>
-        <p data-i18n="dispatchText">Tu peux coller un dispatch uniquement si tu veux récupérer automatiquement l’adresse.</p>
-        <div class="dispatchRow">
-          <label for="dispatchText" data-i18n="pasteDispatch">Coller le texte du dispatch</label><textarea id="dispatchText" rows="5" style="width:100%;padding:12px;background:#0e151a;color:#fff;border:1px solid #3a4750;border-radius:10px;font-size:16px"></textarea><button class="btn ghost" onclick="readDispatchText()" data-i18n="dispatchButton">Trouver l’adresse</button>
-        </div>
-        <div id="dispatchStatus" class="verifyState" data-i18n="dispatchWaiting">Aucun dispatch importé.</div>
-      </div>
     </div>
   </section>
 
@@ -159,24 +159,34 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
       <div id="tray" class="tray"><span class="status" data-i18n="noneSelected">Aucun panneau sélectionné.</span></div>
       <div id="signStatus" class="status" data-i18n="importFirst">Importe d’abord ton plan.</div>
 
-      <div class="subhead" data-i18n="fieldTools">Outils terrain</div>
-      <div class="toolGrid">
-        <button id="distanceTool" class="toolBtn" onclick="activateTool('distance')">↔ 40 m</button>
-        <button id="distance60Tool" class="toolBtn" onclick="activateTool('distance60')">↔ 60 m</button>
-        <button id="flaggerTool" class="toolBtn" onclick="activateTool('flagger')" data-i18n="flaggerTool">🚩 Signaleur</button>
-        <button id="workTool" class="toolBtn" onclick="activateTool('workarea')" data-i18n="workTool">▧ Work Area</button>
-        <button id="plotTool" class="toolBtn" onclick="activateTool('plot')" data-i18n="plotTool">● Plot / point</button>
-        <button id="duplicateTool" class="toolBtn" onclick="duplicateSelected()" data-i18n="duplicateTool">⧉ Dupliquer</button>
-        <button id="pickupLeftTool" class="toolBtn" onclick="activateTool('pickupLeft')" data-i18n="pickupLeftTool">Pickup ←</button>
-        <button id="pickupRightTool" class="toolBtn" onclick="activateTool('pickupRight')" data-i18n="pickupRightTool">Pickup →</button>
-        <button id="rotateTool" class="toolBtn" onclick="rotateSelectedElement()" data-i18n="rotateTool">↻ Tourner l’objet</button>
-      </div>
-      <div class="subhead" data-i18n="objectSizeTitle">Taille de l’objet sélectionné</div>
-      <div class="sizeControls">
-        <button class="btn ghost" onclick="resizeSelected(.90)" data-i18n="sizeDown">− Réduire</button>
-        <button class="btn ghost" onclick="resizeSelected(1.10)" data-i18n="sizeUp">+ Agrandir</button>
-      </div>
-      <div id="selectedInfo" class="selectedInfo" data-i18n="toolHelp">Touche un élément, puis utilise − Réduire ou + Agrandir.</div>
+      <details id="fieldToolsAccordion" class="fieldToolsAccordion">
+        <summary>
+          <span class="fieldToolsSummaryText">
+            <strong data-i18n="fieldTools">Outils terrain</strong>
+            <small>40 m · 60 m · Flagger · Work Area · taille</small>
+          </span>
+          <span class="fieldToolsChevron" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="fieldToolsBody">
+          <div class="toolGrid">
+            <button id="distanceTool" class="toolBtn" onclick="activateTool('distance')">↔ 40 m</button>
+            <button id="distance60Tool" class="toolBtn" onclick="activateTool('distance60')">↔ 60 m</button>
+            <button id="flaggerTool" class="toolBtn" onclick="activateTool('flagger')" data-i18n="flaggerTool">🚩 Signaleur</button>
+            <button id="workTool" class="toolBtn" onclick="activateTool('workarea')" data-i18n="workTool">▧ Work Area</button>
+            <button id="plotTool" class="toolBtn" onclick="activateTool('plot')" data-i18n="plotTool">● Plot / point</button>
+            <button id="duplicateTool" class="toolBtn" onclick="duplicateSelected()" data-i18n="duplicateTool">⧉ Dupliquer</button>
+            <button id="pickupLeftTool" class="toolBtn" onclick="activateTool('pickupLeft')" data-i18n="pickupLeftTool">Pickup ←</button>
+            <button id="pickupRightTool" class="toolBtn" onclick="activateTool('pickupRight')" data-i18n="pickupRightTool">Pickup →</button>
+            <button id="rotateTool" class="toolBtn" onclick="rotateSelectedElement()" data-i18n="rotateTool">↻ Tourner l’objet</button>
+          </div>
+          <div class="subhead" data-i18n="objectSizeTitle">Taille de l’objet sélectionné</div>
+          <div class="sizeControls">
+            <button class="btn ghost" onclick="resizeSelected(.90)" data-i18n="sizeDown">− Réduire</button>
+            <button class="btn ghost" onclick="resizeSelected(1.10)" data-i18n="sizeUp">+ Agrandir</button>
+          </div>
+          <div id="selectedInfo" class="selectedInfo" data-i18n="toolHelp">Touche un élément, puis utilise − Réduire ou + Agrandir.</div>
+        </div>
+      </details>
 
       <div id="workspace" class="workspace">
         <div class="resultBar"><b data-i18n="workspace">Plan de travail</b><span id="count" class="badge">0</span></div>
@@ -231,8 +241,8 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
 </main>
 </div>
 
-<script src="./vendor/jspdf.umd.min.js?v=60"></script>
-<script src="./tmm-images-7-9.js?v=60"></script>
+<script src="./vendor/jspdf.umd.min.js?v=61"></script>
+<script src="./tmm-images-7-9.js?v=61"></script>
 <script>
 let lang='fr',base=null,imageURL='',active='',selected=[],signs=[],redoSigns=[],deleting=false,dragging=-1,resizing=-1,drawingIndex=-1,drawingPointer=null,selectedIndex=-1,dragDX=0,dragDY=0,viewScale=1,addressVerified=false,resizeStartDist=1,resizeStartScale=1,panning=null,pinchStartDist=0,pinchStartScale=1,currentProjectId=null,projectAutosaveTimer=null,projectLoading=false;
 const touchPointers=new Map();let tmmSection='7',imageSection='7',galleryIndex=0,pdfDocPromise=null,pdfRenderSerial=0;
@@ -262,7 +272,6 @@ function clearWorkingProject(){
   base=null;signs=[];redoSigns=[];selected=[];active='';deleting=false;dragging=-1;resizing=-1;drawingIndex=-1;selectedIndex=-1;viewScale=1;addressVerified=false;
   document.getElementById('workspace').classList.remove('show');
   document.getElementById('file').value='';
-  document.getElementById('dispatchText').value='';
   document.getElementById('siteAddress').value='';
   document.getElementById('jobName').value='Hand-drawn TMP';
   document.getElementById('exportFileName').value='Bearclaw-TMM-plan';
@@ -418,7 +427,7 @@ function t(key){return (copy[lang]&&copy[lang][key])||copy.fr[key]||key}
 const tmmFigures={"7":[["7.2","Typical Construction Speed Zone Signing","Two-Lane, Two-Way Roadway"],["7.3","Emergent Work (< 5 Minutes)","Two-Lane, Two-Way Roadway"],["7.4","Brief-Duration Work (<15 Minutes)","Two-Lane, Two-Way Roadway"],["7.5","Work on Shoulder","Short and Long Duration"],["7.6","Work in Parking Lane","Urban Area"],["7.7","Roadside Work — Encroachment into Travel Lane","Short Duration"],["7.8","Lane Closure with TCPs — Single Lane Alternating","Short and Long Duration"],["7.8.1","Lane Closure with TCPs — Speed Reduction","Construction Speed Limit ≤ 50 km/h"],["7.8.2","Lane Closure with TCPs — Speed Reduction","Construction Speed Limit ≥ 60 km/h"],["7.9","Lane Closure with AFADs","Short and Long Duration"],["7.10","Lane Closure with Temporary Signals","Single Lane Alternating"],["7.11","Work on Low-Volume Roadway — No Centreline","Short Duration"],["7.12","Work on Low-Volume Roadway — No Centreline","Long Duration"],["7.13","Two-Way Left-Turn Lane Closed","Short and Long Duration"],["7.14","Roadside Diversion","Long Duration"],["7.15","One-Lane Bridge or Roadway","Short and Long Duration"],["7.16","Pilot Cars",""],["7.17","Work near a Rail System Grade Crossing",""]],"8":[["8.2","Typical Construction Speed Zone Signing","Multilane Undivided Roadway"],["8.3","Emergent Work (< 5 Minutes)","Multilane Undivided Roadway"],["8.4","Brief-Duration Work (<15 Minutes)","Multilane Undivided Roadway"],["8.5","Work on Shoulder","Short and Long Duration"],["8.6","Right Lane Closed","Short and Long Duration"],["8.7","Left Lane Closed","Short and Long Duration"],["8.8","Centre Lane Closure (≤ 60 km/h)",""],["8.9","Centre Lane Closure (≥ 70 km/h)",""],["8.10","Centreline Crossover","Short and Long Duration"],["8.11","Two-Way Left-Turn Lane Closed",""],["8.12","Runaway Lane Open",""],["8.13","Runaway Lane Closed",""],["8.14","Passing/Climbing Lanes — Lane Shift",""]],"9":[["9.2","Typical Construction Speed Zone Signing","Multilane Divided Roadway"],["9.3","Emergent Work (<5 Minutes)","Multilane Divided Roadway"],["9.4","Brief-Duration Work (<15 Minutes)","Multilane Divided Roadway"],["9.5","Work on Shoulder","Short and Long Duration"],["9.6","Right Lane Closed","Short and Long Duration"],["9.7","Left Lane Closed","Short and Long Duration"],["9.8","Centre Lane Closure (≤ 60 km/h)",""],["9.9","Centre Lane Closure (≥ 70 km/h)",""],["9.10.1","Double Right Lane Closure",""],["9.10.2","Double Left Lane Closure",""],["9.11","Median Crossover",""],["9.12","Lane Closure at Open Exit Ramp",""],["9.13","Lane Closure at Open Entrance Ramp — Yield Condition",""],["9.14","Lane Closure at Open Entrance Ramp — Merge Condition",""],["9.15","Temporary Closure of Exit Ramp",""],["9.16","Runaway Lane Open",""],["9.17","Runaway Lane Closed",""],["9.18","Lane Closure with Zipper Merge Signing (Queues < 800 m)",""],["9.19","Lane Closure with Zipper Merge Signing (Queues ≥ 800 m)",""]]};
 const tmmPageNumbers={"7":[243,245,247,249,251,253,255,257,259,261,263,265,267,269,271,273,275,279],"8":[287,289,291,293,295,297,299,301,303,305,307,309,311],"9":[319,321,323,325,327,329,331,333,335,337,339,341,343,345,347,349,351,353,355]};
 function figurePage(code){const section=code.split('.')[0],index=tmmFigures[section].findIndex(x=>x[0]===code);return tmmPageNumbers[section][index]}
-function setModeLabels(){const fr=lang==='fr',set=(id,a,b)=>{const el=document.getElementById(id);if(el)el.textContent=fr?a:b};set('modeTitle','Choisir le mode de travail','Choose the work mode');set('modeText','Choisis les figures TMM, la vue par image ou le dessin manuel.','Choose TMM figures, image view or the hand-drawn plan.');set('modeTmmTitle','📘 Figures TMM / MOT','📘 TMM / MOT Figures');set('modeTmmText','Sections 7, 8 et 9 avec l’image officielle sous chaque figure.','Sections 7, 8 and 9 with the official image below each figure.');set('modeImagesTitle','🖼️ Images seulement','🖼️ Images only');set('modeImagesText','Afficher les figures officielles en grand, une image à la fois.','View the official figures full size, one image at a time.');set('modeManualTitle','✏️ Plan manuel','✏️ Hand-drawn plan');set('modeManualText','Dispatch, adresse, import du plan et placement des panneaux.','Dispatch, address, plan import and sign placement.');set('tmmBack','Menu principal','Main menu');set('imageBack','Menu principal','Main menu');set('manualBack','Menu principal','Main menu');set('tmmTitle','Figures TMM / MOT','TMM / MOT Figures');set('tmmIntro','Touche une figure pour afficher son image officielle.','Tap a figure to display its official image.');set('imageTitle','Images TMM','TMM Images');set('imageIntro','Vue directe des figures officielles.','Direct view of the official figures.');set('prevImage','← Précédente','← Previous');set('nextImage','Suivante →','Next →');/* external manual link removed */set('tmmSafety','Référence rapide seulement : confirme toujours avec le TMM actuel, le TCP du chantier et les directives du superviseur/TCS.','Quick reference only: always confirm with the current TMM, the site TCP and supervisor/TCS direction.');const search=document.getElementById('tmmSearch');if(search)search.placeholder=fr?'Rechercher : sans ligne centrale, accotement, voie fermée…':'Search: no centreline, shoulder, lane closed…';const hint=document.getElementById('panHint');if(hint)hint.textContent=fr?'Glisse une zone vide pour déplacer le plan · pince avec deux doigts pour zoomer':'Drag an empty area to move the plan · pinch with two fingers to zoom';if(!document.getElementById('imageModule').hidden)renderImagePicker()}
+function setModeLabels(){const fr=lang==='fr',set=(id,a,b)=>{const el=document.getElementById(id);if(el)el.textContent=fr?a:b};set('modeTitle','Choisir le mode de travail','Choose the work mode');set('modeText','Choisis les figures TMM, la vue par image ou le dessin manuel.','Choose TMM figures, image view or the hand-drawn plan.');set('modeTmmTitle','📘 Figures TMM / MOT','📘 TMM / MOT Figures');set('modeTmmText','Sections 7, 8 et 9 avec l’image officielle sous chaque figure.','Sections 7, 8 and 9 with the official image below each figure.');set('modeImagesTitle','🖼️ Images seulement','🖼️ Images only');set('modeImagesText','Afficher les figures officielles en grand, une image à la fois.','View the official figures full size, one image at a time.');set('modeManualTitle','✏️ Plan manuel','✏️ Hand-drawn plan');set('modeManualText','Screenshot, adresse et placement des panneaux.','Screenshot, address and sign placement.');set('tmmBack','Menu principal','Main menu');set('imageBack','Menu principal','Main menu');set('manualBack','Menu principal','Main menu');set('tmmTitle','Figures TMM / MOT','TMM / MOT Figures');set('tmmIntro','Touche une figure pour afficher son image officielle.','Tap a figure to display its official image.');set('imageTitle','Images TMM','TMM Images');set('imageIntro','Vue directe des figures officielles.','Direct view of the official figures.');set('prevImage','← Précédente','← Previous');set('nextImage','Suivante →','Next →');/* external manual link removed */set('tmmSafety','Référence rapide seulement : confirme toujours avec le TMM actuel, le TCP du chantier et les directives du superviseur/TCS.','Quick reference only: always confirm with the current TMM, the site TCP and supervisor/TCS direction.');const search=document.getElementById('tmmSearch');if(search)search.placeholder=fr?'Rechercher : sans ligne centrale, accotement, voie fermée…':'Search: no centreline, shoulder, lane closed…';const hint=document.getElementById('panHint');if(hint)hint.textContent=fr?'Glisse une zone vide pour déplacer le plan · pince avec deux doigts pour zoomer':'Drag an empty area to move the plan · pinch with two fingers to zoom';if(!document.getElementById('imageModule').hidden)renderImagePicker()}
 function backToModes(){document.getElementById('modeChooser').hidden=false;document.getElementById('tmmModule').hidden=true;document.getElementById('imageModule').hidden=true;document.getElementById('manualFlow').hidden=true;document.querySelector('header .steps').style.display='none';window.scrollTo(0,0)}
 function openTmm(){document.getElementById('modeChooser').hidden=true;document.getElementById('imageModule').hidden=true;document.getElementById('manualFlow').hidden=true;document.getElementById('tmmModule').hidden=false;document.querySelector('header .steps').style.display='none';renderTmmFigures();window.scrollTo(0,0)}
 function openImages(){document.getElementById('modeChooser').hidden=true;document.getElementById('tmmModule').hidden=true;document.getElementById('manualFlow').hidden=true;document.getElementById('imageModule').hidden=false;document.querySelector('header .steps').style.display='none';renderImagePicker();window.scrollTo(0,0)}
