@@ -1,14 +1,7 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<script>
-(function(){
-  if(location.hostname==="taclargabon.github.io"){
-    var target="https://lct-tmm-assistant.hatchable.site"+location.search+location.hash;
-    location.replace(target);
-  }
-})();
-</script>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Bearclaw — TMM Plan Terrain</title>
@@ -296,8 +289,7 @@ async function cloudSaveProject(rec,{silent=false,keepalive=false}={}){
   if(!rec||!rec.id)return false;
   try{
     if(!silent)setCloudStatus(lang==='fr'?'Cloud : synchronisation…':'Cloud: syncing…');
-    const response=await fetch('/api/cloud-projects',{method:'POST',credentials:'include',keepalive,headers:{'Content-Type':'application/json'},body:JSON.stringify({project:rec})});
-    if(!response.ok)throw new Error('cloud '+response.status);
+    await window.tmmFirebase.save(rec);
     if(!silent)setCloudStatus(lang==='fr'?'Cloud : synchronisé ✓':'Cloud: synced ✓',true);
     return true
   }catch(e){
@@ -313,15 +305,13 @@ function queueCloudProjectSave(rec){
   cloudSyncTimer=setTimeout(()=>cloudSaveProject(rec),8000)
 }
 async function cloudDeleteProject(id){
-  try{await fetch('/api/cloud-projects',{method:'DELETE',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})})}catch(e){console.warn('Cloud delete failed',e)}
+  try{await window.tmmFirebase.remove(id)}catch(e){console.warn('Cloud delete failed',e)}
 }
 async function syncCloudProjects(){
   if(cloudSyncBusy)return;
   cloudSyncBusy=true;setCloudStatus(lang==='fr'?'Cloud : récupération des projets…':'Cloud: loading projects…');
   try{
-    const response=await fetch('/api/cloud-projects',{credentials:'include'});
-    if(!response.ok)throw new Error('cloud '+response.status);
-    const data=await response.json(),remote=Array.isArray(data.projects)?data.projects:[];
+    const remote=await window.tmmFirebase.list();
     const local=await projectAll(),localById=new Map(local.map(p=>[p.id,p])),remoteById=new Map(remote.map(p=>[p.id,p]));
     for(const rp of remote){
       const lp=localById.get(rp.id);
@@ -763,7 +753,8 @@ function showExportPreview(kind,url,filename,w){
  const open=lang==='fr'?'Ouvrir le fichier':'Open file';
  const note=kind==='png'?(lang==='fr'?'Image PNG prête pour Sideoc. Sur iPhone, tu peux aussi appuyer longuement sur l’image pour l’enregistrer dans Photos.':'PNG image ready for Sideoc. On iPhone, you can also press and hold the image to save it to Photos.'):(lang==='fr'?'Sur iPhone, le téléchargement va généralement dans le dossier Téléchargements de l’app Fichiers.':'On iPhone, downloads normally go to the Downloads folder in Files.');
  const media=kind==='png'?'<img src="'+url+'" alt="Bearclaw TMM Plan">':'<iframe src="'+url+'" title="Bearclaw TMM PDF"></iframe>';
- w.document.write('<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>'+filename+'</title><style>*{box-sizing:border-box}html,body{margin:0;background:#111;color:#fff;font-family:Arial,sans-serif}.bar{position:sticky;top:0;z-index:5;display:flex;gap:8px;flex-wrap:wrap;padding:calc(10px + env(safe-area-inset-top)) 10px 10px;background:#111}.bar button,.bar a{border:0;border-radius:11px;padding:11px 13px;font-weight:900;text-decoration:none}.back{background:#27323a;color:#fff}.save{background:#f3bd3d;color:#111}.open{background:#1f2a31;color:#fff}.note{padding:8px 12px;color:#b9c2c8;font-size:12px;line-height:1.4}.view{background:#fff;min-height:75vh;display:flex;align-items:center;justify-content:center}.view img{max-width:100%;height:auto}.view iframe{width:100%;height:78vh;border:0;background:#fff}</style></head><body><div class="bar"><button class="back" onclick="window.close()">'+back+'</button><a class="save" href="'+url+'" download="'+filename+'">'+download+'</a><a class="open" href="'+url+'" target="_blank">'+open+'</a></div><div class="note">'+note+'</div><div class="view">'+media+'</div></body></html>');
+ w.document.write('<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>'+filename+'</title><style>*{box-sizing:border-box}html,body{margin:0;background:#111;color:#fff;font-family:Arial,sans-serif}.bar{position:sticky;top:0;z-index:5;display:flex;gap:8px;flex-wrap:wrap;padding:calc(10px + env(safe-area-inset-top)) 10px 10px;background:#111}.bar button,.bar a{border:0;border-radius:11px;padding:11px 13px;font-weight:900;text-decoration:none}.back{background:#27323a;color:#fff}.save{background:#f3bd3d;color:#111}.open{background:#1f2a31;color:#fff}.note{padding:8px 12px;color:#b9c2c8;font-size:12px;line-height:1.4}.view{background:#fff;min-height:75vh;display:flex;align-items:center;justify-content:center}.view img{max-width:100%;height:auto}.view iframe{width:100%;height:78vh;border:0;background:#fff}</style></head><body><div class="bar"><button class="back" onclick="window.close()">'+back+'</button><a class="save" href="'+url+'" download="'+filename+'">'+download+'</a><a class="open" href="'+url+'" target="_blank">'+open+'</a></div><div class="note">'+note+'</div><div class="view">'+media+'</div><script type="module" src="./firebase-cloud.js"></script>
+</body></html>');
  w.document.close();
 }
 function canvasPngBlob(canvas){return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('PNG export failed')),'image/png'))}
@@ -810,7 +801,6 @@ try{if(sessionStorage.getItem('bearclaw-local-closed')==='1'){document.querySele
 let storedLanguage='fr';try{storedLanguage=localStorage.getItem('bearclaw-tmm-lang')||'fr'}catch(e){}
 setLanguage(storedLanguage);
 backToModes();
-syncCloudProjects();
 document.querySelector('.brand img').addEventListener('load',()=>redraw());
 </script>
 <script src="./tmm-sections-10-19.js?v=66"></script>
