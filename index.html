@@ -105,6 +105,18 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
       <button class="modeCard" onclick="openManual()"><b id="modeManualTitle">✏️ Plan manuel</b><span id="modeManualText">Screenshot, adresse et placement des panneaux.</span></button>
     </div>
   </section>
+
+  <section id="projectHub" class="projectHub">
+    <h2>Mes projets enregistrés</h2>
+    <p>Les plans Hand-drawn sont sauvegardés automatiquement sur cet appareil et synchronisés dans le cloud quand tu es connecté.</p>
+    <div id="cloudStatus" class="fieldHint" style="margin:-3px 0 10px">Cloud : préparation…</div>
+    <div class="projectActions">
+      <button class="btn primary" onclick="openLastProject()">Reprendre le dernier</button>
+      <button class="btn ghost" onclick="newProjectForDay(currentWeekdayIndex())">+ Nouveau projet</button>
+    </div>
+    <div id="weekProjects" class="weekGrid"></div>
+  </section>
+
   <section id="tmmModule" class="tmmModule" hidden>
     <div class="tmmTop"><button class="btn ghost" onclick="backToModes()">‹ <span id="tmmBack">Retour</span></button><div><h2 id="tmmTitle">Figures TMM / MOT</h2><p id="tmmIntro" style="margin:2px 0 0">Référence rapide pour choisir et ajuster le setup.</p></div></div>
     <div class="tmmSections"><button class="tmmSection active" onclick="selectTmmSection('7',this)">Section 7</button><button class="tmmSection" onclick="selectTmmSection('8',this)">Section 8</button><button class="tmmSection" onclick="selectTmmSection('9',this)">Section 9</button></div>
@@ -143,7 +155,7 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
         <button id="cleanPlanBtn" class="btn primary" onclick="cleanImportedPlan()" disabled>Nettoie</button>
         <button id="openEditorBtn" class="btn ghost" onclick="openEditorFromImport()" disabled>Ouvrir l’éditeur du plan</button>
       </div>
-      <div id="cleanStatus" class="verifyState">Nettoie retire seulement les commerces, POI et icônes parasites. La vue satellite et les noms de rues restent.</div>
+      <div id="cleanStatus" class="verifyState">Nettoie conserve exactement les chaussées du satellite, leur cadrage et les noms de rues, puis retire les éléments autour et les informations parasites.</div>
 
       <div class="sectionDivider"></div>
 
@@ -163,6 +175,7 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
     <button class="head" onclick="toggleAcc(this)"><span class="ico">🚧</span><span class="txt"><strong data-i18n="signsTitle">2. Ajouter les panneaux TMM</strong><small data-i18n="signsSub">Choisir → toucher le plan → glisser pour déplacer</small></span><span class="arrow">⌄</span></button>
     <div class="body">
       <label data-i18n="regularSigns">Panneaux réguliers</label>
+      <input id="signSearch" type="search" placeholder="Rechercher un panneau…" data-ph-fr="Rechercher un panneau…" data-ph-en="Search signs…" oninput="renderSignOptions()" style="width:100%;background:#0e151a;color:#fff;border:1px solid #3a4750;border-radius:11px;padding:11px;margin-bottom:7px">
       <select id="signSelect" onchange="chooseSign(this.value)"></select>
       <div id="tray" class="tray"><span class="status" data-i18n="noneSelected">Aucun panneau sélectionné.</span></div>
       <div id="signStatus" class="status" data-i18n="importFirst">Importe d’abord ton plan.</div>
@@ -191,6 +204,13 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
           <div class="sizeControls">
             <button id="sizeDownTool" class="btn ghost editModeBtn" onclick="toggleEditMode('shrink')" data-i18n="sizeDown">− Réduire</button>
             <button id="sizeUpTool" class="btn ghost editModeBtn" onclick="toggleEditMode('grow')" data-i18n="sizeUp">+ Agrandir</button>
+          </div>
+          <div class="subhead">Work Area · forme</div>
+          <div class="sizeControls">
+            <button class="btn ghost" onclick="resizeWorkAreaAxis('w',.82)">Largeur −</button>
+            <button class="btn ghost" onclick="resizeWorkAreaAxis('w',1.22)">Largeur +</button>
+            <button class="btn ghost" onclick="resizeWorkAreaAxis('h',.82)">Hauteur −</button>
+            <button class="btn ghost" onclick="resizeWorkAreaAxis('h',1.22)">Hauteur +</button>
           </div>
           <div id="selectedInfo" class="selectedInfo" data-i18n="toolHelp">Touche un élément, puis utilise − Réduire ou + Agrandir.</div>
         </div>
@@ -252,7 +272,7 @@ label{display:block;color:#c7d0d5;font-size:10px;font-weight:900;margin:10px 0 5
 <script src="./vendor/jspdf.umd.min.js?v=64"></script>
 <script src="./tmm-images-7-9.js?v=64"></script>
 <script>
-let lang='fr',base=null,imageURL='',active='',selected=[],signs=[],redoSigns=[],deleting=false,dragging=-1,resizing=-1,drawingIndex=-1,drawingPointer=null,selectedIndex=-1,dragDX=0,dragDY=0,viewScale=1,addressVerified=false,resizeStartDist=1,resizeStartScale=1,panning=null,pinchStartDist=0,pinchStartScale=1,currentProjectId=null,projectAutosaveTimer=null,projectLoading=false,editMode=null,editPointer=null,resizeHoldTimer=null;
+let lang='fr',base=null,imageURL='',active='',selected=[],signs=[],redoSigns=[],deleting=false,dragging=-1,resizing=-1,drawingIndex=-1,drawingPointer=null,selectedIndex=-1,dragDX=0,dragDY=0,viewScale=1,addressVerified=false,resizeStartDist=1,resizeStartScale=1,panning=null,pinchStartDist=0,pinchStartScale=1,currentProjectId=null,projectAutosaveTimer=null,projectLoading=false,editMode=null,editPointer=null,resizeHoldTimer=null,cloudSyncTimer=null,cloudSyncBusy=false;
 const touchPointers=new Map();let tmmSection='7',imageSection='7',galleryIndex=0,pdfDocPromise=null,pdfRenderSerial=0;
 const officialPdfUrl='https://www2.gov.bc.ca/assets/gov/driving-and-transportation/transportation-infrastructure/engineering-standards-and-guidelines/traffic-engineering-and-safety/traffic-engineering/traffic-management-and-traffic-control/2020-traffic-control-manual/2020-traffic-management-manual-for-work-on-roadways.pdf';
 const c=document.getElementById('plan');
@@ -271,11 +291,59 @@ async function projectGet(id){const db=await projectDb();return dbRequest(db.tra
 async function projectPut(rec){const db=await projectDb();return dbRequest(db.transaction('projects','readwrite').objectStore('projects').put(rec))}
 async function projectDelete(id){const db=await projectDb();return dbRequest(db.transaction('projects','readwrite').objectStore('projects').delete(id))}
 async function projectAll(){const db=await projectDb();return dbRequest(db.transaction('projects','readonly').objectStore('projects').getAll())}
+function setCloudStatus(message,good=false){const el=document.getElementById('cloudStatus');if(!el)return;el.textContent=message;el.style.color=good?'#8bd8ad':'#9eabb3'}
+async function cloudSaveProject(rec,{silent=false,keepalive=false}={}){
+  if(!rec||!rec.id)return false;
+  try{
+    if(!silent)setCloudStatus(lang==='fr'?'Cloud : synchronisation…':'Cloud: syncing…');
+    const response=await fetch('/api/cloud-projects',{method:'POST',credentials:'include',keepalive,headers:{'Content-Type':'application/json'},body:JSON.stringify({project:rec})});
+    if(!response.ok)throw new Error('cloud '+response.status);
+    if(!silent)setCloudStatus(lang==='fr'?'Cloud : synchronisé ✓':'Cloud: synced ✓',true);
+    return true
+  }catch(e){
+    console.warn('Cloud save failed',e);
+    if(!silent)setCloudStatus(lang==='fr'?'Cloud indisponible — sauvegarde locale conservée':'Cloud unavailable — local copy kept');
+    return false
+  }
+}
+function queueCloudProjectSave(rec){
+  if(!rec||!rec.id)return;
+  clearTimeout(cloudSyncTimer);
+  setCloudStatus(lang==='fr'?'Cloud : modification en attente…':'Cloud: changes pending…');
+  cloudSyncTimer=setTimeout(()=>cloudSaveProject(rec),8000)
+}
+async function cloudDeleteProject(id){
+  try{await fetch('/api/cloud-projects',{method:'DELETE',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})})}catch(e){console.warn('Cloud delete failed',e)}
+}
+async function syncCloudProjects(){
+  if(cloudSyncBusy)return;
+  cloudSyncBusy=true;setCloudStatus(lang==='fr'?'Cloud : récupération des projets…':'Cloud: loading projects…');
+  try{
+    const response=await fetch('/api/cloud-projects',{credentials:'include'});
+    if(!response.ok)throw new Error('cloud '+response.status);
+    const data=await response.json(),remote=Array.isArray(data.projects)?data.projects:[];
+    const local=await projectAll(),localById=new Map(local.map(p=>[p.id,p])),remoteById=new Map(remote.map(p=>[p.id,p]));
+    for(const rp of remote){
+      const lp=localById.get(rp.id);
+      if(!lp||Number(rp.updatedAt||0)>Number(lp.updatedAt||0))await projectPut(rp)
+    }
+    const newestLocal=[...local].sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).slice(0,40);
+    for(const lp of newestLocal){
+      const rp=remoteById.get(lp.id);
+      if(!rp||Number(lp.updatedAt||0)>Number(rp.updatedAt||0))await cloudSaveProject(lp,{silent:true})
+    }
+    setCloudStatus(lang==='fr'?'Cloud : synchronisé ✓':'Cloud: synced ✓',true);
+    renderProjectHub()
+  }catch(e){
+    console.warn('Cloud sync failed',e);
+    setCloudStatus(lang==='fr'?'Cloud indisponible — projets locaux accessibles':'Cloud unavailable — local projects available')
+  }finally{cloudSyncBusy=false}
+}
 function currentWeekdayIndex(){return (new Date().getDay()+6)%7}
 function weekKey(d=new Date()){const x=new Date(d);const day=(x.getDay()+6)%7;x.setDate(x.getDate()-day);x.setHours(0,0,0,0);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')}
 function projectId(){return (crypto.randomUUID?crypto.randomUUID():('p-'+Date.now()+'-'+Math.random().toString(36).slice(2)))}
 function projectTitle(rec){return (rec.address||rec.jobName||'Projet TMM').trim()||'Projet TMM'}
-function projectTimestamp(ts){try{return new Date(ts).toLocaleString(lang==='fr'?'fr-CA':'en-CA',{weekday:'short',hour:'2-digit',minute:'2-digit'})}catch(e){return''}}
+function projectTimestamp(ts){try{return new Date(ts).toLocaleString(lang==='fr'?'fr-CA':'en-CA',{year:'numeric',month:'short',day:'2-digit',weekday:'short',hour:'2-digit',minute:'2-digit'})}catch(e){return''}}
 function clearWorkingProject(){
   base=null;signs=[];redoSigns=[];selected=[];active='';deleting=false;dragging=-1;resizing=-1;drawingIndex=-1;selectedIndex=-1;viewScale=1;addressVerified=false;editMode=null;editPointer=null;stopResizeHold();
   document.getElementById('workspace').classList.remove('show');
@@ -309,10 +377,11 @@ async function saveCurrentProjectNow(){
     };
     await projectPut(rec);
     try{localStorage.setItem('bearclaw-last-project-id',currentProjectId)}catch(e){}
+    queueCloudProjectSave(rec);
     renderProjectHub();
   }catch(e){console.warn('Project autosave failed',e)}
 }
-function scheduleProjectAutosave(){if(projectLoading||!currentProjectId)return;clearTimeout(projectAutosaveTimer);projectAutosaveTimer=setTimeout(saveCurrentProjectNow,700)}
+function scheduleProjectAutosave(){if(projectLoading||!currentProjectId)return;clearTimeout(projectAutosaveTimer);projectAutosaveTimer=setTimeout(saveCurrentProjectNow,250)}
 async function ensureCurrentProject(){
   if(currentProjectId)return currentProjectId;
   const id=projectId(),now=Date.now();
@@ -356,7 +425,7 @@ async function loadProject(id){
 async function openLastProject(){
   let id='';try{id=localStorage.getItem('bearclaw-last-project-id')||''}catch(e){}
   let rec=id?await projectGet(id):null;
-  if(!rec||rec.week!==weekKey()){const all=(await projectAll()).filter(x=>x.week===weekKey()).sort((a,b)=>b.updatedAt-a.updatedAt);rec=all[0]||null}
+  if(!rec){const all=(await projectAll()).sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));rec=all[0]||null}
   if(rec)loadProject(rec.id);else newProjectForDay(currentWeekdayIndex());
 }
 async function duplicateProject(id){
@@ -369,6 +438,7 @@ async function duplicateProject(id){
 async function deleteSavedProject(id){
   if(!confirm(lang==='fr'?'Supprimer ce projet enregistré ?':'Delete this saved project?'))return;
   await projectDelete(id);
+  await cloudDeleteProject(id);
   if(currentProjectId===id){currentProjectId=null;projectLoading=true;clearWorkingProject();projectLoading=false;backToModes()}
   renderProjectHub();
 }
@@ -380,30 +450,23 @@ async function resetWeekProjects(){
 }
 async function renderProjectHub(){
   const root=document.getElementById('weekProjects');if(!root)return;
-  const names=lang==='fr'?['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche']:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-  const all=(await projectAll()).filter(x=>x.week===weekKey());
+  let all=[];
+  try{all=(await projectAll()).sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0))}catch(e){console.warn('Project history unavailable',e)}
   root.replaceChildren();
-  names.forEach((name,day)=>{
+  if(!all.length){
+    const empty=document.createElement('div');empty.className='emptyDay';empty.textContent=lang==='fr'?'Aucun projet enregistré pour le moment.':'No saved project yet.';root.append(empty);return
+  }
+  all.slice(0,40).forEach(rec=>{
     const card=document.createElement('div');card.className='dayCard';
-    const head=document.createElement('div');head.className='dayHead';
-    const b=document.createElement('b');b.textContent=name;
-    const add=document.createElement('button');add.textContent='+ Nouveau';add.onclick=()=>newProjectForDay(day);
-    head.append(b,add);card.append(head);
-    const list=document.createElement('div');list.className='dayProjects';
-    const projects=all.filter(x=>x.day===day).sort((a,b)=>b.updatedAt-a.updatedAt);
-    if(!projects.length){const empty=document.createElement('div');empty.className='emptyDay';empty.textContent=lang==='fr'?'Aucun projet':'No project';list.append(empty)}
-    projects.forEach(rec=>{
-      const row=document.createElement('div');row.className='projectRow';
-      const open=document.createElement('button');open.className='projectOpen';open.onclick=()=>loadProject(rec.id);
-      const strong=document.createElement('strong');strong.textContent=projectTitle(rec);
-      const small=document.createElement('small');small.textContent=projectTimestamp(rec.updatedAt);
-      open.append(strong,small);
-      if(rec.id===currentProjectId){const tag=document.createElement('span');tag.className='currentProjectTag';tag.textContent=lang==='fr'?'Projet ouvert':'Open project';open.append(tag)}
-      const dup=document.createElement('button');dup.className='projectMore';dup.textContent='⧉';dup.title=lang==='fr'?'Dupliquer':'Duplicate';dup.onclick=()=>duplicateProject(rec.id);
-      const del=document.createElement('button');del.className='projectMore';del.textContent='×';del.title=lang==='fr'?'Supprimer':'Delete';del.onclick=()=>deleteSavedProject(rec.id);
-      row.append(open,dup,del);list.append(row);
-    });
-    card.append(list);root.append(card);
+    const row=document.createElement('div');row.className='projectRow';
+    const open=document.createElement('button');open.className='projectOpen';open.onclick=()=>loadProject(rec.id);
+    const strong=document.createElement('strong');strong.textContent=projectTitle(rec);
+    const small=document.createElement('small');small.textContent=projectTimestamp(rec.updatedAt);
+    open.append(strong,small);
+    if(rec.id===currentProjectId){const tag=document.createElement('span');tag.className='currentProjectTag';tag.textContent=lang==='fr'?'Projet ouvert':'Open project';open.append(tag)}
+    const dup=document.createElement('button');dup.className='projectMore';dup.textContent='⧉';dup.title=lang==='fr'?'Dupliquer':'Duplicate';dup.onclick=()=>duplicateProject(rec.id);
+    const del=document.createElement('button');del.className='projectMore';del.textContent='×';del.title=lang==='fr'?'Supprimer':'Delete';del.onclick=()=>deleteSavedProject(rec.id);
+    row.append(open,dup,del);card.append(row);root.append(card);
   });
 }
 const copy={
@@ -426,20 +489,55 @@ exportTitle:'3. Export',exportSub:'Save or share the image directly to Sideoc',s
 chooseSign:'Choose a sign…',dispatchReading:'Reading dispatch…',dispatchFound:'Address found: ',dispatchNotFound:'Job-site address not found. You can enter it manually.',dispatchError:'The dispatch could not be read. Enter the address manually.',verifying:'Verifying address…',verified:'✓ Address verified. You can now import the plan.',verifyError:'Address not recognized. Check it and try again.',planImported:'✓ Plan imported. You can place elements.',chooseTool:'Choose a sign or field tool.',placed:' placed.',selected:' selected.',resizeHelp:'Use − Smaller or + Larger.',noSize:'Select a placed element first.',deleteMode:'Delete mode — touch the element to remove.',placementDone:'Placement complete.',confirmReset:'Start a new plan?',popup:'Allow pop-ups to print the PDF.',elements:'element',elementsPlural:'elements',addressMissing:'Site address: to be completed',horizontal:'Horizontal code.',vertical:'Vertical code.'
 }};
 const signNames={
-fr:{'C-018-1A':'Travaux à venir','C-030-8':'Circulation à voie unique','C-029':'Préparez-vous à arrêter','C-001-1':'Signaleur / TCP','C-053':'Flèche de fermeture de voie','C-202':'Trottoir fermé','C-130-L':'Voie gauche fermée','C-130-R':'Voie droite fermée','R-012':'Route fermée','R-015-R':'Virage à droite interdit','R-015-L':'Virage à gauche interdit'},
-en:{'C-018-1A':'Construction Ahead','C-030-8':'Single Lane Traffic','C-029':'Prepare to Stop','C-001-1':'Traffic Control Person / Flagger','C-053':'Lane Closure Arrow','C-202':'Sidewalk Closed','C-130-L':'Left Lane Closed Ahead','C-130-R':'Right Lane Closed Ahead','R-012':'Road Closed','R-015-R':'No Right Turn','R-015-L':'No Left Turn'}};
-const signKinds={'C-018-1A':'warning','C-030-8':'warning','C-029':'warning','C-001-1':'flaggerSign','C-053':'arrowSign','C-202':'regulatory','C-130-L':'laneLeft','C-130-R':'laneRight','R-012':'regulatory','R-015-R':'noTurnRight','R-015-L':'noTurnLeft'};
-const signCodes=['C-018-1A','C-030-8','C-029','C-001-1','C-053','C-130-L','C-130-R','C-202','R-012','R-015-R','R-015-L'];
+fr:{
+'C-001-1':'Signaleur / TCP','C-004':'Équipe au travail','C-005-L1':'Détour gauche','C-005-R1':'Détour droite','C-006-A':'Détour à venir','C-007':'Chaussée dégradée','C-015':'Gravier meuble',
+'C-018-1A':'Travaux à venir','C-018-6A':'Travaux sur accotement','C-018-8L':'Travaux à gauche','C-018-8R':'Travaux à droite','C-029':'Préparez-vous à arrêter',
+'C-030-3A':'Voie gauche fermée','C-030-4A':'Voie droite fermée','C-030-5AL':'Deux voies gauches fermées','C-030-5AR':'Deux voies droites fermées','C-030-6A':'Route fermée à venir','C-030-7A':'Route à une voie','C-030-8':'Circulation à voie unique',
+'C-046':'Aucune ligne routière','C-049-1':'Suivre la voiture pilote','C-051':'Réparation de pont','C-052-L':'Déviation routière à gauche','C-052-R':'Déviation routière à droite','C-053':'Flèche de fermeture de voie','C-063':'Configuration de circulation modifiée','C-088':'Fin de zone de travaux',
+'C-111':'Arrêt à venir','C-112':'Feux de circulation à venir','C-130-L':'Voie gauche fermée — symbole','C-130-R':'Voie droite fermée — symbole','C-132':'Circulation à double sens','C-134':'Route rétrécie','C-136-L':'Insertion par la gauche','C-136-R':'Insertion par la droite','C-137-1':'Fusion de voies','C-141':'Chaussée glissante','C-149':'Fin de chaussée','C-172-L':'Traversée de camions — gauche','C-172-R':'Traversée de camions — droite',
+'W-001-L':'Courbe à gauche','W-001-R':'Courbe à droite','W-003-L':'Double courbe — gauche','W-003-R':'Double courbe — droite','W-108-1':'Bosse / chaussée irrégulière',
+'C-202':'Trottoir fermé','R-010':'Circulation à double sens','R-012':'Route fermée','R-015-R':'Virage à droite interdit','R-015-L':'Virage à gauche interdit','R-022-1':'Dépassement interdit','R-056-1':'Cédez à la circulation venant en sens inverse'
+},
+en:{
+'C-001-1':'Traffic Control Person / Flagger','C-004':'Crew Working Ahead','C-005-L1':'Detour Left','C-005-R1':'Detour Right','C-006-A':'Detour Ahead','C-007':'Broken Pavement','C-015':'Loose Gravel',
+'C-018-1A':'Construction Ahead','C-018-6A':'Shoulder Work','C-018-8L':'Construction Left','C-018-8R':'Construction Right','C-029':'Prepare to Stop',
+'C-030-3A':'Left Lane Closed','C-030-4A':'Right Lane Closed','C-030-5AL':'Left Two Lanes Closed','C-030-5AR':'Right Two Lanes Closed','C-030-6A':'Road Closed Ahead','C-030-7A':'One Lane Road','C-030-8':'Single Lane Traffic',
+'C-046':'No Road Lines','C-049-1':'Follow Pilot Car','C-051':'Bridge Repair','C-052-L':'Roadside Diversion Left','C-052-R':'Roadside Diversion Right','C-053':'Lane Closure Arrow','C-063':'Traffic Pattern Changed','C-088':'Work Zone Ends',
+'C-111':'Stop Ahead','C-112':'Signals Ahead','C-130-L':'Left Lane Closed — symbol','C-130-R':'Right Lane Closed — symbol','C-132':'Two-Way Traffic','C-134':'Road Narrows','C-136-L':'Merging Traffic Left','C-136-R':'Merging Traffic Right','C-137-1':'Merge','C-141':'Slippery Surface','C-149':'Pavement Ends','C-172-L':'Truck Crossing Left','C-172-R':'Truck Crossing Right',
+'W-001-L':'Curve Left','W-001-R':'Curve Right','W-003-L':'Reverse Curve Left','W-003-R':'Reverse Curve Right','W-108-1':'Bump / Rough Roadway',
+'C-202':'Sidewalk Closed','R-010':'Two-Way Traffic','R-012':'Road Closed','R-015-R':'No Right Turn','R-015-L':'No Left Turn','R-022-1':'No Passing','R-056-1':'Yield to Oncoming Traffic'
+}};
+const signKinds={
+'C-001-1':'flaggerSign','C-053':'arrowSign','C-130-L':'laneLeft','C-130-R':'laneRight',
+'C-202':'regulatory','R-010':'regulatory','R-012':'regulatory','R-022-1':'regulatory','R-056-1':'regulatory','R-015-R':'noTurnRight','R-015-L':'noTurnLeft',
+'W-001-L':'yellowWarning','W-001-R':'yellowWarning','W-003-L':'yellowWarning','W-003-R':'yellowWarning','W-108-1':'yellowWarning'
+};
+const signCodes=[
+'C-001-1','C-004','C-018-1A','C-018-6A','C-018-8L','C-018-8R','C-029','C-030-3A','C-030-4A','C-030-5AL','C-030-5AR','C-030-6A','C-030-7A','C-030-8',
+'C-005-L1','C-005-R1','C-006-A','C-052-L','C-052-R','C-063','C-132','C-172-L','C-172-R','C-053',
+'C-007','C-015','C-046','C-049-1','C-051','C-088','C-111','C-112','C-134','C-136-L','C-136-R','C-137-1','C-141','C-149',
+'W-001-L','W-001-R','W-003-L','W-003-R','W-108-1',
+'C-130-L','C-130-R','C-202','R-010','R-012','R-015-R','R-015-L','R-022-1','R-056-1'
+];
+const signTextLines={
+'C-004':['CREW','WORKING','AHEAD'],'C-005-L1':['DETOUR','←'],'C-005-R1':['DETOUR','→'],'C-006-A':['DETOUR','AHEAD'],'C-007':['BROKEN','PAVEMENT'],'C-015':['LOOSE','GRAVEL'],
+'C-018-1A':['CONSTRUCTION','AHEAD'],'C-018-6A':['SHOULDER','WORK'],'C-018-8L':['CONSTRUCTION','←'],'C-018-8R':['CONSTRUCTION','→'],'C-029':['PREPARE','TO','STOP'],
+'C-030-3A':['LEFT LANE','CLOSED'],'C-030-4A':['RIGHT LANE','CLOSED'],'C-030-5AL':['LEFT TWO','LANES CLOSED'],'C-030-5AR':['RIGHT TWO','LANES CLOSED'],'C-030-6A':['ROAD','CLOSED','AHEAD'],'C-030-7A':['ONE LANE','ROAD'],'C-030-8':['SINGLE','LANE','TRAFFIC'],
+'C-046':['NO ROAD','LINES'],'C-049-1':['FOLLOW','PILOT CAR'],'C-051':['BRIDGE','REPAIR'],'C-052-L':['DIVERSION','←'],'C-052-R':['DIVERSION','→'],'C-063':['TRAFFIC','PATTERN','CHANGED'],'C-088':['WORK ZONE','ENDS'],
+'C-111':['STOP','AHEAD'],'C-112':['SIGNALS','AHEAD'],'C-132':['TWO-WAY','TRAFFIC'],'C-134':['ROAD','NARROWS'],'C-136-L':['MERGING','TRAFFIC','←'],'C-136-R':['MERGING','TRAFFIC','→'],'C-137-1':['MERGE'],'C-141':['SLIPPERY','SURFACE'],'C-149':['PAVEMENT','ENDS'],'C-172-L':['TRUCK','CROSSING','←'],'C-172-R':['TRUCK','CROSSING','→'],
+'W-001-L':['CURVE','←'],'W-001-R':['CURVE','→'],'W-003-L':['REVERSE','CURVE','←'],'W-003-R':['REVERSE','CURVE','→'],'W-108-1':['BUMP'],
+'R-010':['TWO-WAY','TRAFFIC'],'R-012':['ROAD','CLOSED'],'R-022-1':['NO','PASSING'],'R-056-1':['YIELD TO','ONCOMING','TRAFFIC'],'C-202':['SIDEWALK','CLOSED']
+};
 function signGlyph(code){const k=signKinds[code];return k==='regulatory'||k==='noTurnRight'||k==='noTurnLeft'?'▭':k==='arrowSign'?'➜':'◆'}
 function t(key){return (copy[lang]&&copy[lang][key])||copy.fr[key]||key}
 const tmmFigures={"7":[["7.2","Typical Construction Speed Zone Signing","Two-Lane, Two-Way Roadway"],["7.3","Emergent Work (< 5 Minutes)","Two-Lane, Two-Way Roadway"],["7.4","Brief-Duration Work (<15 Minutes)","Two-Lane, Two-Way Roadway"],["7.5","Work on Shoulder","Short and Long Duration"],["7.6","Work in Parking Lane","Urban Area"],["7.7","Roadside Work — Encroachment into Travel Lane","Short Duration"],["7.8","Lane Closure with TCPs — Single Lane Alternating","Short and Long Duration"],["7.8.1","Lane Closure with TCPs — Speed Reduction","Construction Speed Limit ≤ 50 km/h"],["7.8.2","Lane Closure with TCPs — Speed Reduction","Construction Speed Limit ≥ 60 km/h"],["7.9","Lane Closure with AFADs","Short and Long Duration"],["7.10","Lane Closure with Temporary Signals","Single Lane Alternating"],["7.11","Work on Low-Volume Roadway — No Centreline","Short Duration"],["7.12","Work on Low-Volume Roadway — No Centreline","Long Duration"],["7.13","Two-Way Left-Turn Lane Closed","Short and Long Duration"],["7.14","Roadside Diversion","Long Duration"],["7.15","One-Lane Bridge or Roadway","Short and Long Duration"],["7.16","Pilot Cars",""],["7.17","Work near a Rail System Grade Crossing",""]],"8":[["8.2","Typical Construction Speed Zone Signing","Multilane Undivided Roadway"],["8.3","Emergent Work (< 5 Minutes)","Multilane Undivided Roadway"],["8.4","Brief-Duration Work (<15 Minutes)","Multilane Undivided Roadway"],["8.5","Work on Shoulder","Short and Long Duration"],["8.6","Right Lane Closed","Short and Long Duration"],["8.7","Left Lane Closed","Short and Long Duration"],["8.8","Centre Lane Closure (≤ 60 km/h)",""],["8.9","Centre Lane Closure (≥ 70 km/h)",""],["8.10","Centreline Crossover","Short and Long Duration"],["8.11","Two-Way Left-Turn Lane Closed",""],["8.12","Runaway Lane Open",""],["8.13","Runaway Lane Closed",""],["8.14","Passing/Climbing Lanes — Lane Shift",""]],"9":[["9.2","Typical Construction Speed Zone Signing","Multilane Divided Roadway"],["9.3","Emergent Work (<5 Minutes)","Multilane Divided Roadway"],["9.4","Brief-Duration Work (<15 Minutes)","Multilane Divided Roadway"],["9.5","Work on Shoulder","Short and Long Duration"],["9.6","Right Lane Closed","Short and Long Duration"],["9.7","Left Lane Closed","Short and Long Duration"],["9.8","Centre Lane Closure (≤ 60 km/h)",""],["9.9","Centre Lane Closure (≥ 70 km/h)",""],["9.10.1","Double Right Lane Closure",""],["9.10.2","Double Left Lane Closure",""],["9.11","Median Crossover",""],["9.12","Lane Closure at Open Exit Ramp",""],["9.13","Lane Closure at Open Entrance Ramp — Yield Condition",""],["9.14","Lane Closure at Open Entrance Ramp — Merge Condition",""],["9.15","Temporary Closure of Exit Ramp",""],["9.16","Runaway Lane Open",""],["9.17","Runaway Lane Closed",""],["9.18","Lane Closure with Zipper Merge Signing (Queues < 800 m)",""],["9.19","Lane Closure with Zipper Merge Signing (Queues ≥ 800 m)",""]]};
 const tmmPageNumbers={"7":[243,245,247,249,251,253,255,257,259,261,263,265,267,269,271,273,275,279],"8":[287,289,291,293,295,297,299,301,303,305,307,309,311],"9":[319,321,323,325,327,329,331,333,335,337,339,341,343,345,347,349,351,353,355]};
 function figurePage(code){const section=code.split('.')[0],index=tmmFigures[section].findIndex(x=>x[0]===code);return tmmPageNumbers[section][index]}
 function setModeLabels(){const fr=lang==='fr',set=(id,a,b)=>{const el=document.getElementById(id);if(el)el.textContent=fr?a:b};set('modeTitle','Choisir le mode de travail','Choose the work mode');set('modeText','Choisis les figures TMM, la vue par image ou le dessin manuel.','Choose TMM figures, image view or the hand-drawn plan.');set('modeTmmTitle','📘 Figures TMM / MOT','📘 TMM / MOT Figures');set('modeTmmText','Sections 7, 8 et 9 avec l’image officielle sous chaque figure.','Sections 7, 8 and 9 with the official image below each figure.');set('modeImagesTitle','🖼️ Images seulement','🖼️ Images only');set('modeImagesText','Afficher les figures officielles en grand, une image à la fois.','View the official figures full size, one image at a time.');set('modeManualTitle','✏️ Plan manuel','✏️ Hand-drawn plan');set('modeManualText','Screenshot, adresse et placement des panneaux.','Screenshot, address and sign placement.');set('tmmBack','Menu principal','Main menu');set('imageBack','Menu principal','Main menu');set('manualBack','Menu principal','Main menu');set('tmmTitle','Figures TMM / MOT','TMM / MOT Figures');set('tmmIntro','Touche une figure pour afficher son image officielle.','Tap a figure to display its official image.');set('imageTitle','Images TMM','TMM Images');set('imageIntro','Vue directe des figures officielles.','Direct view of the official figures.');set('prevImage','← Précédente','← Previous');set('nextImage','Suivante →','Next →');/* external manual link removed */set('tmmSafety','Référence rapide seulement : confirme toujours avec le TMM actuel, le TCP du chantier et les directives du superviseur/TCS.','Quick reference only: always confirm with the current TMM, the site TCP and supervisor/TCS direction.');const search=document.getElementById('tmmSearch');if(search)search.placeholder=fr?'Rechercher : sans ligne centrale, accotement, voie fermée…':'Search: no centreline, shoulder, lane closed…';const hint=document.getElementById('panHint');if(hint)hint.textContent=fr?'Glisse une zone vide pour déplacer le plan · pince avec deux doigts pour zoomer':'Drag an empty area to move the plan · pinch with two fingers to zoom';if(!document.getElementById('imageModule').hidden)renderImagePicker()}
-function backToModes(){document.getElementById('modeChooser').hidden=false;document.getElementById('tmmModule').hidden=true;document.getElementById('imageModule').hidden=true;document.getElementById('manualFlow').hidden=true;document.querySelector('header .steps').style.display='none';window.scrollTo(0,0)}
-function openTmm(){document.getElementById('modeChooser').hidden=true;document.getElementById('imageModule').hidden=true;document.getElementById('manualFlow').hidden=true;document.getElementById('tmmModule').hidden=false;document.querySelector('header .steps').style.display='none';renderTmmFigures();window.scrollTo(0,0)}
-function openImages(){document.getElementById('modeChooser').hidden=true;document.getElementById('tmmModule').hidden=true;document.getElementById('manualFlow').hidden=true;document.getElementById('imageModule').hidden=false;document.querySelector('header .steps').style.display='none';renderImagePicker();window.scrollTo(0,0)}
-function openManual(){if(!currentProjectId)ensureCurrentProject();document.getElementById('modeChooser').hidden=true;document.getElementById('tmmModule').hidden=true;document.getElementById('imageModule').hidden=true;document.getElementById('manualFlow').hidden=false;document.querySelector('header .steps').style.display='grid';window.scrollTo(0,0)}
+function backToModes(){document.getElementById('modeChooser').hidden=false;document.getElementById('projectHub').hidden=false;document.getElementById('tmmModule').hidden=true;document.getElementById('imageModule').hidden=true;document.getElementById('manualFlow').hidden=true;document.querySelector('header .steps').style.display='none';renderProjectHub();window.scrollTo(0,0)}
+function openTmm(){document.getElementById('modeChooser').hidden=true;document.getElementById('projectHub').hidden=true;document.getElementById('imageModule').hidden=true;document.getElementById('manualFlow').hidden=true;document.getElementById('tmmModule').hidden=false;document.querySelector('header .steps').style.display='none';renderTmmFigures();window.scrollTo(0,0)}
+function openImages(){document.getElementById('modeChooser').hidden=true;document.getElementById('projectHub').hidden=true;document.getElementById('tmmModule').hidden=true;document.getElementById('manualFlow').hidden=true;document.getElementById('imageModule').hidden=false;document.querySelector('header .steps').style.display='none';renderImagePicker();window.scrollTo(0,0)}
+async function openManual(){if(!currentProjectId)await ensureCurrentProject();document.getElementById('modeChooser').hidden=true;document.getElementById('projectHub').hidden=true;document.getElementById('tmmModule').hidden=true;document.getElementById('imageModule').hidden=true;document.getElementById('manualFlow').hidden=false;document.querySelector('header .steps').style.display='grid';window.scrollTo(0,0)}
 function selectTmmSection(section,button){tmmSection=section;document.querySelectorAll('#tmmModule .tmmSection').forEach(b=>b.classList.remove('active'));if(button)button.classList.add('active');document.getElementById('tmmDetail').hidden=true;renderTmmFigures()}
 function renderTmmFigures(){const q=(document.getElementById('tmmSearch').value||'').toLowerCase(),list=document.getElementById('tmmList');list.innerHTML='';tmmFigures[tmmSection].filter(x=>x.join(' ').toLowerCase().includes(q)).forEach(x=>{const b=document.createElement('button');b.className='tmmFigure';const title=document.createElement('b');title.textContent=x[0]+' — '+x[1];const sub=document.createElement('span');sub.textContent=x[2];b.append(title,sub);b.onclick=()=>showTmmDetail(x);list.appendChild(b)});if(!list.children.length)list.innerHTML='<div class="status">'+(lang==='fr'?'Aucune figure trouvée.':'No figure found.')+'</div>'}
 function pdfDocument(){return Promise.reject(new Error('Local image mode'))}
@@ -459,7 +557,7 @@ function setLanguage(next){
  document.getElementById('langFr').classList.toggle('active',lang==='fr');document.getElementById('langEn').classList.toggle('active',lang==='en');
  renderSignOptions();renderTray();setModeLabels();renderProjectHub();if(base)redraw();
 }
-function renderSignOptions(){const select=document.getElementById('signSelect'),current=select.value;select.innerHTML='<option value="">'+t('chooseSign')+'</option>'+signCodes.map(code=>'<option value="'+code+'">'+signNames[lang][code]+' — '+code+'</option>').join('');select.value=current}
+function renderSignOptions(){const select=document.getElementById('signSelect'),search=document.getElementById('signSearch'),current=select.value,q=(search&&search.value||'').trim().toLowerCase();const filtered=signCodes.filter(code=>!q||code.toLowerCase().includes(q)||(signNames[lang][code]||'').toLowerCase().includes(q)||(signNames.en[code]||'').toLowerCase().includes(q));select.innerHTML='<option value="">'+t('chooseSign')+'</option>'+filtered.map(code=>'<option value="'+code+'">'+signNames[lang][code]+' — '+code+'</option>').join('');select.value=filtered.includes(current)?current:''}
 function closeSplash(){document.getElementById('splash').classList.add('hide')}
 setTimeout(closeSplash,1900);
 function toggleAcc(b){b.closest('.acc').classList.toggle('open')}
@@ -484,8 +582,16 @@ async function loadImage(ev){
  try{const dataUrl=await fileToDataUrl(f);await setBaseFromDataUrl(dataUrl);document.getElementById('cleanPlanBtn').disabled=false;document.getElementById('openEditorBtn').disabled=false;document.getElementById('importStatus').innerHTML='<span class="ok">'+(lang==='fr'?'✓ Image importée. Tu peux maintenant cliquer sur Nettoie.':'✓ Image imported. You can now tap Clean.')+'</span>';document.getElementById('cleanStatus').textContent=lang==='fr'?'Nettoyage léger : garde la vue satellite et les noms de rues, retire commerces, POI et icônes parasites.':'Light cleanup: keeps the satellite view and street names, removes businesses, POIs and unwanted icons.';document.getElementById('cleanStatus').className='verifyState good'}catch(e){console.error(e);document.getElementById('importStatus').textContent=lang==='fr'?'Impossible d’importer cette image.':'Unable to import this image.'}
 }
 async function cleanImportedPlan(){
- if(!base)return;const btn=document.getElementById('cleanPlanBtn'),s=document.getElementById('cleanStatus');btn.disabled=true;s.innerHTML='<span class="working"></span>'+(lang==='fr'?'Nettoyage du plan…':'Cleaning plan…');s.className='verifyState';
- try{const imageDataUrl=base.toDataURL('image/jpeg',.92),ratio=base.width/base.height,aspect=ratio>1.55?'16:9':ratio>1.08?'4:3':ratio<.65?'9:16':ratio<.92?'3:4':'1:1',cleanApi=location.hostname.endsWith('hatchable.site')?'/api/clean-plan':'https://lct-tmm-assistant.hatchable.site/api/clean-plan';const r=await fetch(cleanApi,{method:'POST',credentials:cleanApi.startsWith('http')?'include':'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageDataUrl,aspect,correction:'Nettoyage léger TMP Bearclaw : conserver exactement la vue satellite, le cadrage, le zoom, les rues et leurs noms. Retirer uniquement les noms de commerces, POI, pins, icônes commerciales et éléments d’interface parasites. Ne pas redessiner la carte.'})});const contentType=(r.headers.get('content-type')||'').toLowerCase();if(!contentType.includes('application/json'))throw new Error('auth_or_api_unavailable');const data=await r.json();if(!r.ok||!data.dataUrl)throw new Error(data.message||data.error||'clean_failed');await setBaseFromDataUrl(data.dataUrl);document.getElementById('openEditorBtn').disabled=false;s.textContent=lang==='fr'?'✓ Nettoyage léger terminé. Vue satellite et noms de rues conservés.':'✓ Light cleanup complete. Satellite view and street names preserved.';s.className='verifyState good';document.getElementById('importStatus').innerHTML='<span class="ok">'+(lang==='fr'?'✓ Plan propre prêt.':'✓ Clean plan ready.')+'</span>'}catch(e){console.error(e);const authIssue=String(e&&e.message||'').includes('auth_or_api_unavailable');s.textContent=authIssue?(lang==='fr'?'Le service de nettoyage nécessite ta session Hatchable. Ouvre une fois la version Hatchable, connecte-toi, puis reviens ici et relance Nettoie.':'The cleaning service needs your Hatchable session. Open the Hatchable version once, sign in, then come back here and retry Clean.'):(lang==='fr'?'Nettoyage indisponible pour le moment. Tu peux quand même ouvrir l’éditeur avec l’image importée.':'Cleaning is unavailable right now. You can still open the editor with the imported image.');s.className='verifyState bad'}finally{btn.disabled=false}
+ if(!base)return;const btn=document.getElementById('cleanPlanBtn'),s=document.getElementById('cleanStatus');btn.disabled=true;s.innerHTML='<span class="working"></span>'+(lang==='fr'?'Nettoyage satellite en cours…':'Cleaning satellite image…');s.className='verifyState';
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),65000);
+ try{
+  const maxSide=1600,scale=Math.min(1,maxSide/Math.max(base.width,base.height)),send=document.createElement('canvas');send.width=Math.max(1,Math.round(base.width*scale));send.height=Math.max(1,Math.round(base.height*scale));send.getContext('2d').drawImage(base,0,0,send.width,send.height);
+  const imageDataUrl=send.toDataURL('image/jpeg',.90),ratio=send.width/send.height,aspect=ratio>1.55?'16:9':ratio>1.08?'4:3':ratio<.65?'9:16':ratio<.92?'3:4':'1:1',cleanApi=location.hostname.endsWith('hatchable.site')?'/api/clean-plan':'https://lct-tmm-assistant.hatchable.site/api/clean-plan';
+  const r=await fetch(cleanApi,{method:'POST',signal:controller.signal,credentials:cleanApi.startsWith('http')?'include':'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageDataUrl,aspect,correction:'Appliquer strictement le modèle satellite TMP Bearclaw validé : garder exactement les chaussées originales, leur géométrie, cadrage, zoom et noms de rues ; nettoyer maisons, bâtiments, arbres, voitures, commerces, numéros, POI, pins et interface autour des routes. Ne jamais redessiner ni déplacer les rues.'})});
+  const contentType=(r.headers.get('content-type')||'').toLowerCase();if(!contentType.includes('application/json'))throw new Error('auth_or_api_unavailable');const data=await r.json();if(!r.ok||!data.dataUrl)throw new Error(data.message||data.error||'clean_failed');
+  await setBaseFromDataUrl(data.dataUrl);document.getElementById('openEditorBtn').disabled=false;s.textContent=lang==='fr'?'✓ Nettoyage satellite terminé. Chaussées, cadrage et noms de rues conservés.':'✓ Satellite cleanup complete. Roads, framing and street names preserved.';s.className='verifyState good';document.getElementById('importStatus').innerHTML='<span class="ok">'+(lang==='fr'?'✓ Plan satellite nettoyé prêt.':'✓ Clean satellite plan ready.')+'</span>';
+ }catch(e){console.error(e);const msg=String(e&&e.message||'');const authIssue=msg.includes('auth_or_api_unavailable'),timeout=e&&e.name==='AbortError';s.textContent=timeout?(lang==='fr'?'Le nettoyage a dépassé 65 secondes. Réessaie une fois ; l’image importée reste disponible.':'Cleaning exceeded 65 seconds. Retry once; your imported image is still available.'):authIssue?(lang==='fr'?'Le service de nettoyage nécessite ta session Hatchable. Ouvre la version Hatchable, connecte-toi, puis relance Nettoie.':'The cleaning service needs your Hatchable session. Open Hatchable, sign in, then retry Clean.'):(lang==='fr'?'Le nettoyage a échoué : '+msg+'. L’image importée reste disponible.':'Cleaning failed: '+msg+'. The imported image is still available.');s.className='verifyState bad';
+ }finally{clearTimeout(timer);btn.disabled=false}
 }
 function openEditorFromImport(){if(!base)return;document.getElementById('workspace').classList.add('show');document.getElementById('pngBtn').disabled=false;document.getElementById('pdfBtn').disabled=false;document.getElementById('printBtn').disabled=false;document.getElementById('signStatus').textContent=t('chooseTool');step(2);openOnly('a2');setTimeout(fitView,120)}
 function chooseSign(code){if(!code)return;if(!base){document.getElementById('signStatus').textContent=t('importFirst');document.getElementById('signSelect').value='';return}if(!selected.includes(code))selected.push(code);clearEditMode();active=code;selectedIndex=-1;deleting=false;clearToolButtons();document.getElementById('deleteBtn').classList.remove('deleteOn');document.getElementById('signSelect').value='';renderTray();status()}
@@ -513,10 +619,17 @@ function elementRotation(s){return ((Number.isFinite(s.rotation)?s.rotation:(s.t
 function setElementRotation(s,deg){s.rotation=((deg%360)+360)%360;if(s.type==='sign')s.codeRotation=s.rotation}
 function resizeElement(s,factor){
  if(!s)return;
- if(s.type==='workarea'){s.w=Math.max(70,Math.min(c.width,s.w*factor));s.h=Math.max(42,Math.min(c.height,s.h*factor))}
+ if(s.type==='workarea'){s.w=Math.max(60,Math.min(c.width,s.w*factor));s.h=Math.max(30,Math.min(c.height,s.h*factor))}
  else if(isLinearShape(s)){const m=shapeCenter(s);s.x=m.x+(s.x-m.x)*factor;s.y=m.y+(s.y-m.y)*factor;s.x2=m.x+(s.x2-m.x)*factor;s.y2=m.y+(s.y2-m.y)*factor}
  else if(s.type==='curve'&&s.points){const m=shapeCenter(s);s.points=s.points.map(p=>({x:m.x+(p.x-m.x)*factor,y:m.y+(p.y-m.y)*factor}))}
  else{s.userScale=Math.max(.28,Math.min(2,(s.userScale||1)*factor))}
+}
+function resizeWorkAreaAxis(axis,factor){
+ if(selectedIndex<0||!signs[selectedIndex]||signs[selectedIndex].type!=='workarea'){document.getElementById('selectedInfo').textContent=lang==='fr'?'Sélectionne d’abord un Work Area.':'Select a Work Area first.';return}
+ const s=signs[selectedIndex];
+ if(axis==='w')s.w=Math.max(60,Math.min(c.width,s.w*factor));else s.h=Math.max(30,Math.min(c.height,s.h*factor));
+ document.getElementById('selectedInfo').textContent=lang==='fr'?'Forme du Work Area ajustée.':'Work Area shape adjusted.';
+ redraw()
 }
 function activateTool(type){if(!base){document.getElementById('signStatus').textContent=t('importFirst');return}clearEditMode();active=type;selectedIndex=-1;deleting=false;drawingIndex=-1;document.getElementById('deleteBtn').classList.remove('deleteOn');clearToolButtons();const ids={distance60:'distance60Tool',distance:'distanceTool',flagger:'flaggerTool',workarea:'workTool',plot:'plotTool',pickupLeft:'pickupLeftTool',pickupRight:'pickupRightTool'},id=ids[type];if(id)document.getElementById(id).classList.add('active');renderTray();status()}
 function status(){const labels={distance:'40 m',distance60:'60 m',flagger:lang==='fr'?'Signaleur':'Flagger',workarea:'Work Area',plot:'Plot / point',pickupLeft:'Pickup ←',pickupRight:'Pickup →'};if(!active){document.getElementById('signStatus').textContent=t('chooseTool');return}document.getElementById('signStatus').textContent=(labels[active]||('Panneau '+active))+' — '+(lang==='fr'?'touche le plan pour le placer.':'touch the plan to place it.')}
@@ -532,12 +645,12 @@ function hit(p){const tolerance=Math.max(16,c.width*.012);for(let i=signs.length
 function isResizeHandle(s,p){return false}
 function drawSelection(ctx,s){const b=getBounds(s),k=markerK(ctx);ctx.save();ctx.strokeStyle='#1479ff';ctx.lineWidth=3*k;ctx.setLineDash([9*k,6*k]);ctx.strokeRect(b.x1,b.y1,b.x2-b.x1,b.y2-b.y1);ctx.setLineDash([]);ctx.restore()}
 function signCodeTag(ctx,code,k,y){ctx.save();ctx.font='800 '+Math.max(8,Math.round(9*k))+'px Arial';const w=Math.max(52*k,ctx.measureText(code).width+12*k);ctx.fillStyle='rgba(255,255,255,.96)';ctx.strokeStyle='#111';ctx.lineWidth=1.3*k;ctx.beginPath();ctx.roundRect(-w/2,y-9*k,w,18*k,5*k);ctx.fill();ctx.stroke();ctx.fillStyle='#111';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(code,0,y);ctx.restore()}
-function diamondBase(ctx,k){ctx.save();ctx.rotate(Math.PI/4);ctx.fillStyle='#f39a1f';ctx.strokeStyle='#111';ctx.lineWidth=3*k;ctx.fillRect(-39*k,-39*k,78*k,78*k);ctx.strokeRect(-39*k,-39*k,78*k,78*k);ctx.restore()}
+function diamondBase(ctx,k,fill='#f39a1f'){ctx.save();ctx.rotate(Math.PI/4);ctx.fillStyle=fill;ctx.strokeStyle='#111';ctx.lineWidth=3*k;ctx.fillRect(-39*k,-39*k,78*k,78*k);ctx.strokeRect(-39*k,-39*k,78*k,78*k);ctx.restore()}
 function centeredSignText(ctx,lines,k,size=13){ctx.fillStyle='#111';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='900 '+Math.round(size*k)+'px Arial';const step=(size+2)*k;lines.forEach((ln,i)=>ctx.fillText(ln,0,(i-(lines.length-1)/2)*step))}
 function drawFlaggerSign(ctx,k){diamondBase(ctx,k);ctx.save();ctx.strokeStyle='#111';ctx.fillStyle='#111';ctx.lineWidth=4*k;ctx.lineCap='round';ctx.beginPath();ctx.arc(-3*k,-16*k,5*k,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.moveTo(-3*k,-10*k);ctx.lineTo(-3*k,15*k);ctx.moveTo(-3*k,-2*k);ctx.lineTo(-16*k,8*k);ctx.moveTo(-3*k,-2*k);ctx.lineTo(10*k,-2*k);ctx.moveTo(-3*k,15*k);ctx.lineTo(-12*k,29*k);ctx.moveTo(-3*k,15*k);ctx.lineTo(7*k,29*k);ctx.stroke();ctx.lineWidth=2.5*k;ctx.beginPath();ctx.moveTo(10*k,-2*k);ctx.lineTo(10*k,-28*k);ctx.stroke();ctx.beginPath();ctx.moveTo(10*k,-27*k);ctx.lineTo(27*k,-21*k);ctx.lineTo(10*k,-14*k);ctx.closePath();ctx.fill();ctx.restore()}
 function drawLaneClosureSign(ctx,k,left){diamondBase(ctx,k);ctx.save();ctx.strokeStyle='#111';ctx.lineWidth=5*k;ctx.lineCap='round';const fixed=left?15:-15,closing=left?-15:15;ctx.beginPath();ctx.moveTo(fixed*k,28*k);ctx.lineTo(fixed*k,-28*k);ctx.stroke();ctx.beginPath();ctx.moveTo(closing*k,28*k);ctx.bezierCurveTo(closing*k,10*k,fixed*k,4*k,fixed*k,-10*k);ctx.stroke();ctx.restore()}
 function drawTurnBan(ctx,k,right){ctx.save();ctx.fillStyle='#fff';ctx.strokeStyle='#111';ctx.lineWidth=3*k;ctx.beginPath();ctx.roundRect(-48*k,-40*k,96*k,80*k,5*k);ctx.fill();ctx.stroke();ctx.strokeStyle='#111';ctx.lineWidth=5*k;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(0,22*k);ctx.lineTo(0,-9*k);ctx.quadraticCurveTo(0,-22*k,(right?14:-14)*k,-22*k);ctx.lineTo((right?26:-26)*k,-22*k);ctx.stroke();ctx.fillStyle='#111';ctx.beginPath();const ax=(right?29:-29)*k,ay=-22*k;ctx.moveTo(ax,ay);ctx.lineTo((right?18:-18)*k,-31*k);ctx.lineTo((right?18:-18)*k,-13*k);ctx.closePath();ctx.fill();ctx.strokeStyle='#d51f2a';ctx.lineWidth=6*k;ctx.beginPath();ctx.arc(0,0,31*k,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(-22*k,-22*k);ctx.lineTo(22*k,22*k);ctx.stroke();ctx.restore()}
-function drawTrafficSign(ctx,s,k){const kind=signKinds[s.code]||'warning';if(kind==='flaggerSign'){drawFlaggerSign(ctx,k);signCodeTag(ctx,s.code,k,55*k);return}if(kind==='laneLeft'||kind==='laneRight'){drawLaneClosureSign(ctx,k,kind==='laneLeft');signCodeTag(ctx,s.code,k,55*k);return}if(kind==='arrowSign'){ctx.fillStyle='#f39a1f';ctx.strokeStyle='#111';ctx.lineWidth=3*k;ctx.beginPath();ctx.roundRect(-58*k,-30*k,116*k,60*k,5*k);ctx.fill();ctx.stroke();ctx.fillStyle='#111';ctx.beginPath();ctx.moveTo(-35*k,-7*k);ctx.lineTo(15*k,-7*k);ctx.lineTo(15*k,-19*k);ctx.lineTo(40*k,0);ctx.lineTo(15*k,19*k);ctx.lineTo(15*k,7*k);ctx.lineTo(-35*k,7*k);ctx.closePath();ctx.fill();signCodeTag(ctx,s.code,k,43*k);return}if(kind==='noTurnRight'||kind==='noTurnLeft'){drawTurnBan(ctx,k,kind==='noTurnRight');signCodeTag(ctx,s.code,k,53*k);return}if(kind==='regulatory'){ctx.fillStyle='#fff';ctx.strokeStyle='#111';ctx.lineWidth=3*k;ctx.beginPath();ctx.roundRect(-58*k,-31*k,116*k,62*k,5*k);ctx.fill();ctx.stroke();const lines=s.code==='R-012'?['ROAD','CLOSED']:['SIDEWALK','CLOSED'];centeredSignText(ctx,lines,k,13);signCodeTag(ctx,s.code,k,44*k);return}diamondBase(ctx,k);const textMap={'C-018-1A':['CONSTRUCTION'],'C-030-8':['SINGLE','LANE','TRAFFIC'],'C-029':['PREPARE','TO','STOP']};centeredSignText(ctx,textMap[s.code]||[(signNames.en[s.code]||s.code).toUpperCase()],k,s.code==='C-018-1A'?10:11);signCodeTag(ctx,s.code,k,55*k)}
+function drawTrafficSign(ctx,s,k){const kind=signKinds[s.code]||'warning',lines=signTextLines[s.code]||[(signNames.en[s.code]||s.code).toUpperCase()];if(kind==='flaggerSign'){drawFlaggerSign(ctx,k);signCodeTag(ctx,s.code,k,55*k);return}if(kind==='laneLeft'||kind==='laneRight'){drawLaneClosureSign(ctx,k,kind==='laneLeft');signCodeTag(ctx,s.code,k,55*k);return}if(kind==='arrowSign'){ctx.fillStyle='#f39a1f';ctx.strokeStyle='#111';ctx.lineWidth=3*k;ctx.beginPath();ctx.roundRect(-58*k,-30*k,116*k,60*k,5*k);ctx.fill();ctx.stroke();ctx.fillStyle='#111';ctx.beginPath();ctx.moveTo(-35*k,-7*k);ctx.lineTo(15*k,-7*k);ctx.lineTo(15*k,-19*k);ctx.lineTo(40*k,0);ctx.lineTo(15*k,19*k);ctx.lineTo(15*k,7*k);ctx.lineTo(-35*k,7*k);ctx.closePath();ctx.fill();signCodeTag(ctx,s.code,k,43*k);return}if(kind==='noTurnRight'||kind==='noTurnLeft'){drawTurnBan(ctx,k,kind==='noTurnRight');signCodeTag(ctx,s.code,k,53*k);return}if(kind==='regulatory'){ctx.fillStyle='#fff';ctx.strokeStyle='#111';ctx.lineWidth=3*k;ctx.beginPath();ctx.roundRect(-58*k,-35*k,116*k,70*k,5*k);ctx.fill();ctx.stroke();centeredSignText(ctx,lines,k,lines.length>2?10:12);signCodeTag(ctx,s.code,k,48*k);return}diamondBase(ctx,k,kind==='yellowWarning'?'#f4d03f':'#f39a1f');centeredSignText(ctx,lines,k,lines.length>2?9.5:11);signCodeTag(ctx,s.code,k,55*k)}
 function drawMarker(ctx,s,index){const baseK=markerK(ctx),u=s.userScale||1,k=baseK*u;ctx.save();
  if(s.type==='distance'){ctx.translate(s.x,s.y);ctx.rotate(elementRotation(s)*Math.PI/180);const dl=(s.distance||40)===60?78*k:52*k,ah=10*k;ctx.strokeStyle='#111';ctx.fillStyle='#111';ctx.lineWidth=3*k;ctx.beginPath();ctx.moveTo(-dl,0);ctx.lineTo(dl,0);ctx.stroke();ctx.beginPath();ctx.moveTo(-dl,0);ctx.lineTo(-dl+ah,-8*k);ctx.lineTo(-dl+ah,8*k);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(dl,0);ctx.lineTo(dl-ah,-8*k);ctx.lineTo(dl-ah,8*k);ctx.closePath();ctx.fill();ctx.font='900 '+Math.round(15*k)+'px Arial';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.lineWidth=5*k;ctx.strokeStyle='#fff';ctx.strokeText((s.distance||40)+' m',0,-5*k);ctx.fillStyle='#111';ctx.fillText((s.distance||40)+' m',0,-5*k)}
  else if(s.type==='flagger'){ctx.translate(s.x,s.y);ctx.rotate(elementRotation(s)*Math.PI/180);ctx.fillStyle='#e11';ctx.strokeStyle='#e11';ctx.lineWidth=5*k;ctx.lineCap='round';ctx.beginPath();ctx.arc(0,-24*k,7*k,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.moveTo(0,-15*k);ctx.lineTo(0,18*k);ctx.moveTo(0,-5*k);ctx.lineTo(-13*k,9*k);ctx.moveTo(0,-5*k);ctx.lineTo(15*k,-5*k);ctx.moveTo(0,18*k);ctx.lineTo(-10*k,36*k);ctx.moveTo(0,18*k);ctx.lineTo(10*k,36*k);ctx.stroke();ctx.lineWidth=3*k;ctx.beginPath();ctx.moveTo(15*k,-5*k);ctx.lineTo(15*k,-38*k);ctx.stroke();ctx.beginPath();ctx.arc(15*k,-45*k,8*k,0,Math.PI*2);ctx.fill()}
@@ -614,12 +727,12 @@ c.addEventListener('pointerdown',e=>{
  if(h>=0){selectedIndex=h;const s=signs[h];if(isResizeHandle(s,p)){resizing=h;resizeStartDist=Math.max(10,Math.hypot(p.x-s.x,p.y-s.y));resizeStartScale=s.userScale||1}else{dragging=h;if(isDrawingShape(s)){dragDX=p.x;dragDY=p.y}else{dragDX=s.x-p.x;dragDY=s.y-p.y}}document.getElementById('selectedInfo').textContent=elementLabel(s)+t('selected')+' '+t('resizeHelp');redraw();return}
  if(active){
    let s;
-   if(active==='distance'||active==='distance60')s={type:'distance',distance:active==='distance60'?60:40,x:p.x,y:p.y,userScale:.68,rotation:0};
-   else if(active==='flagger')s={type:'flagger',x:p.x,y:p.y,userScale:.42,rotation:0};
-   else if(active==='workarea')s={type:'workarea',x:p.x,y:p.y,w:Math.max(105,c.width*.12),h:Math.max(58,c.height*.065),rotation:0};
-   else if(active==='plot')s={type:'plot',x:p.x,y:p.y,userScale:.55,rotation:0};
-   else if(active==='pickupLeft'||active==='pickupRight')s={type:active,x:p.x,y:p.y,userScale:.30,rotation:0};
-   else s={type:'sign',code:active,x:p.x,y:p.y,codeRotation:0,rotation:0,userScale:.30};
+   if(active==='distance'||active==='distance60')s={type:'distance',distance:active==='distance60'?60:40,x:p.x,y:p.y,userScale:.78,rotation:0};
+   else if(active==='flagger')s={type:'flagger',x:p.x,y:p.y,userScale:.72,rotation:0};
+   else if(active==='workarea')s={type:'workarea',x:p.x,y:p.y,w:Math.max(165,c.width*.18),h:Math.max(48,c.height*.045),rotation:0};
+   else if(active==='plot')s={type:'plot',x:p.x,y:p.y,userScale:.65,rotation:0};
+   else if(active==='pickupLeft'||active==='pickupRight')s={type:active,x:p.x,y:p.y,userScale:.42,rotation:0};
+   else s={type:'sign',code:active,x:p.x,y:p.y,codeRotation:0,rotation:0,userScale:.56};
    signs.push(s);redoSigns=[];selectedIndex=signs.length-1;const placed=elementLabel(s);active='';clearToolButtons();renderTray();redraw();document.getElementById('signStatus').textContent=placed+t('placed');return
  }
  selectedIndex=-1;document.getElementById('selectedInfo').textContent=t('toolHelp');redraw();const wrap=document.getElementById('canvasWrap');panning={id:e.pointerId,x:e.clientX,y:e.clientY,left:wrap.scrollLeft,top:wrap.scrollTop};
@@ -690,12 +803,16 @@ function printPDF(){
  w.document.close();
 }
 function resetPlan(){if(!confirm(lang==='fr'?'Créer un nouveau projet ? Le projet actuel restera enregistré.':'Create a new project? The current project will stay saved.'))return;newProjectForDay(currentWeekdayIndex())}
+window.addEventListener('pagehide',()=>{saveCurrentProjectNow().then(async()=>{if(currentProjectId){const rec=await projectGet(currentProjectId);if(rec)cloudSaveProject(rec,{silent:true,keepalive:true})}})});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')saveCurrentProjectNow().then(async()=>{if(currentProjectId){const rec=await projectGet(currentProjectId);if(rec)cloudSaveProject(rec,{silent:true,keepalive:true})}})});
 loadProfile();
 try{if(sessionStorage.getItem('bearclaw-local-closed')==='1'){document.querySelector('main').hidden=true;document.getElementById('sessionGate').hidden=false}}catch(e){}
 let storedLanguage='fr';try{storedLanguage=localStorage.getItem('bearclaw-tmm-lang')||'fr'}catch(e){}
 setLanguage(storedLanguage);
 backToModes();
+syncCloudProjects();
 document.querySelector('.brand img').addEventListener('load',()=>redraw());
 </script>
+<script src="./tmm-sections-10-19.js?v=66"></script>
 </body>
 </html>
